@@ -1,0 +1,53 @@
+#############################
+# SO / TEMP
+#############################
+.DS_Store
+Thumbs.db
+desktop.ini
+tmp/
+temp/
+*.log
+*.bak
+*.swp
+
+#############################
+# ECLIPSE / IDE
+#############################
+.project
+.classpath
+.settings/
+.metadata/
+.recommenders/
+Servers/
+RemoteSystemsTempFiles/
+.factorypath
+.idea/
+.vscode/
+*.iml
+
+#############################
+# JAVA / BUILD
+#############################
+/bin/
+/target/
+/out/
+/build/
+*.class
+*.jar
+*.war
+*.ear
+
+#############################
+# TOMCAT / DEPLOY LOCALES
+#############################
+/.tomcat/
+/tomcat/
+/apache-tomcat*/
+Catalina/
+
+#############################
+# DB / SECRETS
+#############################
+*.env
+*.properties
+*.sql~
