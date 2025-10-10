@@ -3,7 +3,7 @@ package dto;
 public class ProductoDTO {
 
 	public ProductoDTO() {
-		// TODO Auto-generated constructor stub
+		// formato de objeto que le voy a pasar al front o que recibo del front
 	}
 
 }
