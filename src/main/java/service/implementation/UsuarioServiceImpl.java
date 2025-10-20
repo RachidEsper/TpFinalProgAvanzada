@@ -1,6 +1,8 @@
 package service.implementation;
 
-public class UsuarioServiceImpl {
+import service.interfaces.IUsuarioService;
+
+public class UsuarioServiceImpl implements IUsuarioService{
 
 	public UsuarioServiceImpl() {
 		// TODO Auto-generated constructor stub
