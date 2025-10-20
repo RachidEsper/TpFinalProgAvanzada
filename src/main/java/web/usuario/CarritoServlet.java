@@ -1,4 +1,4 @@
-package web.carrito;
+package web.usuario;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
