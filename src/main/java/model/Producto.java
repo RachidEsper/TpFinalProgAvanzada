@@ -21,6 +21,10 @@ public class Producto {
 		this.idCategoria = idCategoria;
 	}
 
+	public Producto() {
+		// Constructor vacío
+	}
+
 	public String getIdProducto() {
 		return idProducto;
 	}

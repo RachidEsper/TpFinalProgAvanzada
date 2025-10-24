@@ -10,6 +10,10 @@ public class TipoUsuario {
 		this.descripcion = descripcion;
 	}
 
+	public TipoUsuario() {
+		// Constructor vacío
+	}
+
 	public int getIdTipoUsuario() {
 		return idTipoUsuario;
 	}

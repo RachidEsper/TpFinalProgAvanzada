@@ -18,6 +18,10 @@ public class Usuario {
 		this.telefono = telefono;
 	}
 
+	public Usuario() {
+		// TODO Auto-generated constructor stub
+	}
+
 	public int getIdUsuario() {
 		return idUsuario;
 	}

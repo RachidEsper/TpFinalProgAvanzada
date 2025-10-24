@@ -20,6 +20,10 @@ public class Pedido {
 		this.total = total;
 	}
 
+	public Pedido() {
+		// Constructor vacío
+	}
+
 	public int getIdPedido() {
 		return idPedido;
 	}

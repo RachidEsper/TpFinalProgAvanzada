@@ -17,6 +17,10 @@ public class DetallePedido {
 		this.precioUnitario = precioUnitario;
 	}
 
+	public DetallePedido() {
+		// Constructor vacío
+	}
+
 	public int getIdDetalle() {
 		return idDetalle;
 	}
