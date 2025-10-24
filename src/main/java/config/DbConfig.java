@@ -11,7 +11,7 @@ import java.sql.SQLException;
 public final class DbConfig {
 
 	// 3.1) Constantes de configuración (podés moverlas a .properties más adelante)
-	private final String host = "jdbc:mysql://localhost:3306/test";
+	private final String host = "jdbc:mysql://localhost:3306/ventas_cosmeticos";
 	private final String user = "root";
 	private final String pass = "";
 	
