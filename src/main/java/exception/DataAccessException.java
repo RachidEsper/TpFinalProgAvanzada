@@ -1,9 +1,15 @@
 package exception;
 
-public class DataAccessException {
+public class DataAccessException extends RuntimeException {
 
-	public DataAccessException() {
-		// TODO Auto-generated constructor stub
-	}
+	private static final long serialVersionUID = 1L;
+
+    public DataAccessException(String message) {
+        super(message);
+    }
+
+    public DataAccessException(String message, Throwable cause) {
+        super(message, cause);
+    }
 
 }
