@@ -12,7 +12,9 @@ public interface ICategoriaDAO {
 	Categoria update(Categoria categoria);
 	boolean deleteById(int idCategoria);
 	boolean existsById(int idCategoria);
+	Categoria findbyname(String nombre);
 	int count();
+	
 	
 	/*
 	 * que pasa si en vez de hacer una interfaz por cada dao,
