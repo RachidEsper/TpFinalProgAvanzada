@@ -4,7 +4,7 @@ import java.sql.ResultSet;
 import model.Categoria;
 import config.DbConfig;
 import dao.implementation.CategoriaDAOImpl;
-
+import dao.interfaces.ICategoriaDAO;
 public class Main {
 	public static void main(String[] args) {
 		// 4.1) Usamos el Singleton y probamos un SELECT 1 (smoke test)
@@ -20,21 +20,35 @@ public class Main {
 			e.printStackTrace();
 		}
 		*/
-		CategoriaDAOImpl categoriaDAO = new CategoriaDAOImpl();
+		// Hacer Login completo
+		// Listar productos
+		// Crear un producto
+		// Modificar un producto
+		// Usuarios
 		
+		ICategoriaDAO categoriaDAO = new CategoriaDAOImpl();
 		
+		Categoria nuevaCategoria = new Categoria();
+		nuevaCategoria.setNombre("Perfumes");
+		nuevaCategoria.setDescripcion("Fragancias y aromas");
 		
-		//System.out.println("ID: "+categoriaDAO.findbyid(5).getIdCategoria()+
-			//	" Nombre: "+categoriaDAO.findbyid(5).getNombre()
-				//+" Descripcion: "+categoriaDAO.findbyid(5).getDescripcion());
-		
-		categoriaDAO.deleteById(6);
-		
-		
-		System.out.println("Probando metodo findById:");
-		System.out.println("ID: "+categoriaDAO.findbyid(1).getIdCategoria()+
-				" Nombre: "+categoriaDAO.findbyid(1).getNombre()
-				+" Descripcion: "+categoriaDAO.findbyid(1).getDescripcion());
+		System.out.println("----- LISTA DE CATEGORIAS -----");
+		for(Categoria cat : categoriaDAO.findall()) {
+			System.out.println("ID: "+cat.getIdCategoria()+
+					" Nombre: "+cat.getNombre()
+						+" Descripcion: "+cat.getDescripcion());
+		}
+		Categoria categoria=categoriaDAO.findbyname("Perfumeria");
+/*		System.out.println("----- BUSCAR CATEGORIA POR NOMBRE -----");
+		if(categoria!=null) {
+			System.out.println("ID: "+categoria.getIdCategoria()+
+					" Nombre: "+categoria.getNombre()
+						+" Descripcion: "+categoria.getDescripcion());
+		}
+		else {
+			System.out.println("No se encontro la categoria");
+		}
+*/	
 		
 		/*
 		 * public static void main(String[] args) { // aca hago pruebas de test
