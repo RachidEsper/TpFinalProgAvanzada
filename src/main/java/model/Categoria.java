@@ -1,7 +1,7 @@
 package model;
 
 public class Categoria {
-	private int idCategoria;
+	private Integer idCategoria;
 	private String nombre;
 	private String descripcion;
 
