@@ -21,7 +21,7 @@ import model.Producto;
  * - Facilita mantenimiento (si cambia la estructura, se modifica solo aquí)
  */
 public class ProductoMapperDAO {
-
+	// poner constructor privado y los metodos estaticos
 	/**
 	 * Convierte UNA fila del ResultSet en un objeto Producto.
 	 * 
