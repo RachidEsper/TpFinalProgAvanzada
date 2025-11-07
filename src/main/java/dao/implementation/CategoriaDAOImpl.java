@@ -1,4 +1,4 @@
- package dao.implementation;
+package dao.implementation;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -19,6 +19,15 @@ public class CategoriaDAOImpl implements ICategoriaDAO {
 		// TODO Auto-generated constructor stub
 	}
 
+	/*
+	 * El id es dato nuestro, para el usuario final solo se usara el nombre de la
+	 * categoria
+	 */
+	/*
+	 * Cuando cargamos una categoria, validar que no exista por nombre, probar usar
+	 * uppercase en logica de negocio
+	 */
+
 	@Override
 	public List<Categoria> findall() {
 		// Metodo funcionando
@@ -35,7 +44,7 @@ public class CategoriaDAOImpl implements ICategoriaDAO {
 				categoria.setNombre(rs.getString("nombre"));
 				categoria.setDescripcion(rs.getString("descripcion"));
 				categorias.add(categoria);
-				
+
 			}
 			return categorias;
 		} catch (SQLException e) {
@@ -49,7 +58,7 @@ public class CategoriaDAOImpl implements ICategoriaDAO {
 	public Categoria findbyid(int idCategoria) {
 		// Aca se escribe la query(consulta)
 		// Metodo funcionando
-		final String SQL = "SELECT * FROM categoria WHERE id_categoria = ?";
+		final String SQL = "SELECT * FROM categoria WHERE  = ?";
 		// try with resources: abre y cierra la conexion sola
 		try (Connection connection = DbConfig.getInstance().getConnection();
 				PreparedStatement ps = connection.prepareStatement(SQL)) {
@@ -140,12 +149,11 @@ public class CategoriaDAOImpl implements ICategoriaDAO {
 
 			ps.setInt(1, idCategoria);
 			int affected = ps.executeUpdate();
-			System.out.println("Categoria eliminada con ID: " + idCategoria);	
+			System.out.println("Categoria eliminada con ID: " + idCategoria);
 			// Si affected > 0 significa que se eliminó al menos una fila
 			return affected > 0;
-			
-		} 
-		catch (SQLException e) {
+
+		} catch (SQLException e) {
 			System.out.println("Error eliminando categoria: " + e.getMessage());
 			return false;
 		}
@@ -165,7 +173,7 @@ public class CategoriaDAOImpl implements ICategoriaDAO {
 					return count > 0;
 				}
 			}
-			
+
 		} catch (SQLException e) {
 			System.out.println("Error verificando existencia de categoria: " + e.getMessage());
 		}
@@ -178,4 +186,31 @@ public class CategoriaDAOImpl implements ICategoriaDAO {
 		return 0;
 	}
 
+	@Override
+	public Categoria findbyname(String nombre) {
+		final String SQL = "SELECT * FROM categoria WHERE nombre = ?";
+		try (Connection connection = DbConfig.getInstance().getConnection();
+				PreparedStatement ps = connection.prepareStatement(SQL)) {
+			ps.setString(1, nombre);
+			try (ResultSet rs = ps.executeQuery()) {
+				// Recorro el ResultSet y voy creando la categoria
+				if (rs.next()) {
+					Categoria categoria = new Categoria();
+					categoria.setIdCategoria(rs.getInt("id_Categoria"));
+					categoria.setNombre(rs.getString("nombre"));
+					categoria.setDescripcion(rs.getString("descripcion"));
+
+					return categoria;
+				}
+			}
+
+		} catch (SQLException e) {
+			System.out.println("Error al obtener la categoria por NOMBRE: " + e.getMessage());
+			return null;
+		}
+		
+		
+		
+		return null;
+	}
 }
