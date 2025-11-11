@@ -2,9 +2,12 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import model.Categoria;
+import model.Usuario;
 import config.DbConfig;
 import dao.implementation.CategoriaDAOImpl;
+import dao.implementation.UsuarioDAOImpl;
 import dao.interfaces.ICategoriaDAO;
+import dao.interfaces.IUsuarioDAO;
 public class Main {
 	public static void main(String[] args) {
 		// 4.1) Usamos el Singleton y probamos un SELECT 1 (smoke test)
@@ -38,7 +41,7 @@ public class Main {
 					" Nombre: "+cat.getNombre()
 						+" Descripcion: "+cat.getDescripcion());
 		}
-		Categoria categoria=categoriaDAO.findbyname("Perfumeria");
+		
 /*		System.out.println("----- BUSCAR CATEGORIA POR NOMBRE -----");
 		if(categoria!=null) {
 			System.out.println("ID: "+categoria.getIdCategoria()+
@@ -49,6 +52,16 @@ public class Main {
 			System.out.println("No se encontro la categoria");
 		}
 */	
+		IUsuarioDAO usuarioDAO = new UsuarioDAOImpl();
+		System.out.println("----- LISTA DE USUARIOS -----");
+		for(Usuario user : usuarioDAO.findAll()) {
+			System.out.println("ID: "+user.getIdUsuario()+
+					" Nombre: "+user.getNombre()
+						+" Email: "+user.getEmail());
+			
+		}
+		
+		
 		
 		/*
 		 * public static void main(String[] args) { // aca hago pruebas de test
