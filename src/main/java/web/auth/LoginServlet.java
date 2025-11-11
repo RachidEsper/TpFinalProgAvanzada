@@ -40,53 +40,40 @@ public class LoginServlet extends HttpServlet {
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
 	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-	        throws ServletException, IOException {
+	 protected void doPost(HttpServletRequest request, HttpServletResponse response)
+		      throws ServletException, IOException {
 
-	    String email = request.getParameter("email");
-	    String password = request.getParameter("password");
+		    String email = request.getParameter("email");
+		    String password = request.getParameter("password");
 
-	   
+		    IAuthService auth = new IAuthServiceImpl();
 
-	    IAuthService auth = new IAuthServiceImpl();
-	    try {
-	        // 2) Autenticación
-	        Usuario user = auth.login(email, password);
+		    try {
+		      Usuario user = auth.login(email, password);
 
-	        if (user == null) {
-	        	// Credenciales inválidas → volver al login con mensaje global
-	            request.setAttribute("globalError", "Credenciales inválidas.");
-	            request.setAttribute("email", email); // si querés repoblar el email
-	            getServletContext()
-	                .getRequestDispatcher("/views/auth/login.jsp")
-	                .forward(request, response);
-	            return;
-	        }
+		      if (user == null) {
+		        request.setAttribute("globalError", "Credenciales inválidas.");
+		        request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
+		        return;
+		      }
 
-	        // (éxito: por ahora no hacemos nada porque no querés /home todavía)
-	        // Cuando lo hagas: guardar en sesión y redirect a /home.
+		      // Éxito: guardo en sesión y redirijo a /base.jsp en la RAÍZ DE WEBAPP
+		      request.getSession().setAttribute("user", user);
+		      response.sendRedirect(request.getContextPath() + "/base.jsp");
+		      return;
 
-	    } catch (DataAccessException dae) {
-	        // 3) Error técnico de BD → volver al login sin 500
-	    	 dae.printStackTrace(); // <-- para saber si fue BD
-	        request.setAttribute("globalError", "Problema técnico. Intentá nuevamente.");
-	        request.setAttribute("email", email);
-	        getServletContext()
-	            .getRequestDispatcher("/views/auth/login.jsp")
-	            .forward(request, response);
-	        return;
-
-	    } catch (Exception ex) {
-	        // 4) Cualquier otro error inesperado
-	    	 ex.printStackTrace(); // <-- para ver si fue IllegalArgumentException/NPE, etc.
-	        request.setAttribute("globalError", "Ocurrió un error inesperado.");
-	        request.setAttribute("email", email);
-	        getServletContext()
-	            .getRequestDispatcher("/views/auth/login.jsp")
-	            .forward(request, response);
-	        return;
-	    }
-	}
+		    } catch (DataAccessException dae) {
+		      dae.printStackTrace();
+		      request.setAttribute("globalError", "Problema técnico. Intentá nuevamente.");
+		      request.setAttribute("email", email);
+		      request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
+		    } catch (Exception ex) {
+		      ex.printStackTrace();
+		      request.setAttribute("globalError", "Ocurrió un error inesperado.");
+		      request.setAttribute("email", email);
+		      request.getRequestDispatcher("/views/auth/login.jsp").forward(request, response);
+		    }
+		  }
 
 
 }
