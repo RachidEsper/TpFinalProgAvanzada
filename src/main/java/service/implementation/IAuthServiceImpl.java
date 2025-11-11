@@ -18,35 +18,31 @@ public class IAuthServiceImpl implements IAuthService {
 	public Usuario login(String email, String passwordPlano) {
 		// TODO Auto-generated method stub
 		try {
-	        IUsuarioDAO usuarioDAO = new UsuarioDAOImpl();
-	        Usuario user = usuarioDAO.findByEmail(email);
+			IUsuarioDAO usuarioDAO = new UsuarioDAOImpl();
+			Usuario user = usuarioDAO.findByEmail(email);
 
-	        // Email inexistente → credenciales inválidas
-	        if (user == null) return null;
+			// Email inexistente → credenciales inválidas
+			if (user == null)
+				return null;
 
-	        String hash = user.getContrasenia(); // o getContraseniaHash()
+			String password = user.getContrasenia(); // o getContraseniaHash()
+			if (password != null && !password.isEmpty()) {
+				if (passwordPlano.equals(password)) {
+					return user;
 
-	        // Si no hay hash guardado o viene roto → tratá como credenciales inválidas
-	        if (hash == null || hash.isBlank()) return null;
+				}
 
-	        try {
-	            boolean ok = BCrypt.checkpw(passwordPlano, hash);
-	            return ok ? user : null;
-	        } catch (IllegalArgumentException iae) {
-	            // Formato de hash inválido (ej: no es BCrypt) → tratá como credenciales inválidas
-	            return null;
-	        }
-
-	    } catch (DataAccessException dae) {
-	        // Errors reales de BD: dejalos subir
-	        throw dae;
-	    } catch (RuntimeException re) {
-	        // Cualquier otra Runtime inesperada (p. ej. NPE al mapear columnas)
-	        // traducila si querés o dejala subir: pero mejor que NO se confunda con credenciales invalidas
-	        throw re;
-	    }
+			}
+			return null;
+		} catch (DataAccessException dae) {
+			// Errors reales de BD: dejalos subir
+			throw dae;
+		} catch (RuntimeException re) {
+			// Cualquier otra Runtime inesperada (p. ej. NPE al mapear columnas)
+			// traducila si querés o dejala subir: pero mejor que NO se confunda con
+			// credenciales invalidas
+			throw re;
+		}
 	}
-
-	
 
 }
