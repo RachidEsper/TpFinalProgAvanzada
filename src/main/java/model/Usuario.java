@@ -5,7 +5,7 @@ public class Usuario {
 	private TipoUsuario tipo;
 	private String nombre;
 	private String email;
-	private String contrasenia;
+	private String password;
 	private String telefono;
 
 	public Usuario(int idUsuario, TipoUsuario tipo, String nombre, String email, String contrasenia, String telefono) {
@@ -14,7 +14,7 @@ public class Usuario {
 		this.tipo = tipo;
 		this.nombre = nombre;
 		this.email = email;
-		this.contrasenia = contrasenia;
+		this.password = contrasenia;
 		this.telefono = telefono;
 	}
 
@@ -54,12 +54,12 @@ public class Usuario {
 		this.email = email;
 	}
 
-	public String getContrasenia() {
-		return contrasenia;
+	public String getPassword() {
+		return password;
 	}
 
-	public void setContrasenia(String contrasenia) {
-		this.contrasenia = contrasenia;
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public String getTelefono() {
@@ -69,5 +69,7 @@ public class Usuario {
 	public void setTelefono(String telefono) {
 		this.telefono = telefono;
 	}
+
+	
 
 }
