@@ -1,7 +1,20 @@
 <%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
 String ctx = request.getContextPath();
+System.out.println("Context Path: " + ctx);
+// Usuario en sesión y nombre a mostrar
+model.Usuario user = (model.Usuario) session.getAttribute("user");
+String nombre = null;
+if (user != null) {
+	try {
+		nombre = (user.getNombre() != null && !user.getNombre().isBlank()) ? user.getNombre() : user.getEmail(); // fallback al email
+	} catch (Exception ignore) {
+	}
+}
+// 🔹 NUEVO: página de contenido que va “adentro del layout”
+String contentPage = (String) request.getAttribute("contentPage");
 %>
+
 <!DOCTYPE html>
 <html lang="es">
 <head>
@@ -11,7 +24,7 @@ String ctx = request.getContextPath();
 	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <meta name="description" content="" />
 <meta name="author" content="" />
-<title>Dashboard - SB Admin</title>
+<title>INICIO</title>
 
 <!-- Simple Datatables (CSS) -->
 <link
@@ -37,7 +50,7 @@ String ctx = request.getContextPath();
 	<!-- NAVBAR SUPERIOR -->
 	<nav class="sb-topnav navbar navbar-expand navbar-dark bg-dark">
 		<!-- Marca -->
-		<a class="navbar-brand ps-3" href="<%=ctx%>/base.jsp">VENTASMN</a>
+		<a class="navbar-brand ps-3" href="<%=ctx%>/views/base.jsp">VENTASMN</a>
 
 		<!-- Toggle sidebar -->
 		<button class="btn btn-link btn-sm order-1 order-lg-0 me-4 me-lg-0"
@@ -49,8 +62,8 @@ String ctx = request.getContextPath();
 		<form
 			class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
 			<div class="input-group">
-				<input class="form-control" type="text" placeholder="Buscar..."
-					aria-label="Buscar" />
+				<input class="form-control" type="text"
+					placeholder="Buscar Productos.." aria-label="Buscar" />
 				<button class="btn btn-primary" type="button">
 					<i class="fas fa-search"></i>
 				</button>
@@ -69,8 +82,9 @@ String ctx = request.getContextPath();
 					<li><a class="dropdown-item" href="#">Actividad</a></li>
 					<li><hr class="dropdown-divider" /></li>
 					<li>
-						<form id="logoutForm" method="post" action="<%=ctx%>/LogoutServlet"
-							style="display: none"></form> <a class="dropdown-item" href="#"
+						<form id="logoutForm" method="post"
+							action="<%=ctx%>/LogoutServlet" style="display: none"></form> <a
+						class="dropdown-item" href="#"
 						onclick="document.getElementById('logoutForm').submit(); return false;">
 							Salir </a>
 					</li>
@@ -86,7 +100,7 @@ String ctx = request.getContextPath();
 				<div class="sb-sidenav-menu">
 					<div class="nav">
 						<div class="sb-sidenav-menu-heading">Core</div>
-						<a class="nav-link" href="<%=ctx%>/base.jsp">
+						<a class="nav-link" href="<%=ctx%>/views/base.jsp">
 							<div class="sb-nav-link-icon">
 								<i class="fas fa-tachometer-alt"></i>
 							</div> Dashboard
@@ -108,8 +122,10 @@ String ctx = request.getContextPath();
 						<div class="collapse" id="menuUsuarios"
 							data-bs-parent="#sidenavAccordion">
 							<nav class="sb-sidenav-menu-nested nav">
-								<a class="nav-link" href="#">Ver Usuarios</a> <a
-									class="nav-link" href="#">Alta Usuarios</a>
+								<!-- AQUI el cambio -->
+								<a class="nav-link" href="<%=ctx%>/UsuarioListarServlet">Ver
+									Usuarios</a> <a class="nav-link"
+									href="<%=ctx%>/UsuarioCrearServlet">Alta Usuarios</a>
 							</nav>
 						</div>
 
@@ -174,165 +190,34 @@ String ctx = request.getContextPath();
 		<div id="layoutSidenav_content">
 			<main>
 				<div class="container-fluid px-4">
-					<h1 class="mt-4">Dashboard</h1>
-					<ol class="breadcrumb mb-4">
-						<li class="breadcrumb-item active">Dashboard</li>
-					</ol>
-
-					<!-- Cards -->
-					<div class="row">
-						<div class="col-xl-3 col-md-6">
-							<div class="card bg-primary text-white mb-4">
-								<div class="card-body">Primary Card</div>
-								<div
-									class="card-footer d-flex align-items-center justify-content-between">
-									<a class="small text-white stretched-link" href="#">View
-										Details</a>
-									<div class="small text-white">
-										<i class="fas fa-angle-right"></i>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-xl-3 col-md-6">
-							<div class="card bg-warning text-white mb-4">
-								<div class="card-body">Warning Card</div>
-								<div
-									class="card-footer d-flex align-items-center justify-content-between">
-									<a class="small text-white stretched-link" href="#">View
-										Details</a>
-									<div class="small text-white">
-										<i class="fas fa-angle-right"></i>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-xl-3 col-md-6">
-							<div class="card bg-success text-white mb-4">
-								<div class="card-body">Success Card</div>
-								<div
-									class="card-footer d-flex align-items-center justify-content-between">
-									<a class="small text-white stretched-link" href="#">View
-										Details</a>
-									<div class="small text-white">
-										<i class="fas fa-angle-right"></i>
-									</div>
-								</div>
-							</div>
-						</div>
-						<div class="col-xl-3 col-md-6">
-							<div class="card bg-danger text-white mb-4">
-								<div class="card-body">Danger Card</div>
-								<div
-									class="card-footer d-flex align-items-center justify-content-between">
-									<a class="small text-white stretched-link" href="#">View
-										Details</a>
-									<div class="small text-white">
-										<i class="fas fa-angle-right"></i>
-									</div>
-								</div>
-							</div>
-						</div>
+					<%
+					// Si no se especificó contentPage, mostramos el dashboard por defecto.
+					if (contentPage == null) {
+					%>
+					<div class="py-5">
+						<h1 class="display-5 fw-semibold mb-3">
+							¡Bienvenido,
+							<%=nombre%>!
+						</h1>
+						<p class="fs-5 text-muted">
+							Esta es tu tienda <strong>VentasMN</strong>...
+						</p>
+						<!-- resto del texto de bienvenida -->
 					</div>
-
-					<!-- Charts -->
-					<div class="row">
-						<div class="col-xl-6">
-							<div class="card mb-4">
-								<div class="card-header">
-									<i class="fas fa-chart-area me-1"></i> Area Chart Example
-								</div>
-								<div class="card-body">
-									<canvas id="myAreaChart" width="100%" height="40"></canvas>
-								</div>
-							</div>
-						</div>
-						<div class="col-xl-6">
-							<div class="card mb-4">
-								<div class="card-header">
-									<i class="fas fa-chart-bar me-1"></i> Bar Chart Example
-								</div>
-								<div class="card-body">
-									<canvas id="myBarChart" width="100%" height="40"></canvas>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<!-- DataTable -->
-					<div class="card mb-4">
-						<div class="card-header">
-							<i class="fas fa-table me-1"></i> DataTable Example
-						</div>
-						<div class="card-body">
-							<table id="datatablesSimple" class="table table-striped">
-								<thead>
-									<tr>
-										<th>Name</th>
-										<th>Position</th>
-										<th>Office</th>
-										<th>Age</th>
-										<th>Start date</th>
-										<th>Salary</th>
-									</tr>
-								</thead>
-								<tfoot>
-									<tr>
-										<th>Name</th>
-										<th>Position</th>
-										<th>Office</th>
-										<th>Age</th>
-										<th>Start date</th>
-										<th>Salary</th>
-									</tr>
-								</tfoot>
-								<tbody>
-									<tr>
-										<td>Tiger Nixon</td>
-										<td>System Architect</td>
-										<td>Edinburgh</td>
-										<td>61</td>
-										<td>2011/04/25</td>
-										<td>$320,800</td>
-									</tr>
-									<tr>
-										<td>Garrett Winters</td>
-										<td>Accountant</td>
-										<td>Tokyo</td>
-										<td>63</td>
-										<td>2011/07/25</td>
-										<td>$170,750</td>
-									</tr>
-									<tr>
-										<td>Ashton Cox</td>
-										<td>Junior Technical Author</td>
-										<td>San Francisco</td>
-										<td>66</td>
-										<td>2009/01/12</td>
-										<td>$86,000</td>
-									</tr>
-									<!-- ... (dejé algunas filas como ejemplo) ... -->
-								</tbody>
-							</table>
-						</div>
-					</div>
-
+					<%
+					} else {
+					%>
+					<jsp:include page="<%=contentPage%>" />
+					<%
+					}
+					%>
 				</div>
 			</main>
 
-			<footer class="py-4 bg-light mt-auto">
-				<div class="container-fluid px-4">
-					<div
-						class="d-flex align-items-center justify-content-between small">
-						<div class="text-muted">Copyright &copy; Tu Sitio 2025</div>
-						<div>
-							<a href="#">Privacy Policy</a> &middot; <a href="#">Terms
-								&amp; Conditions</a>
-						</div>
-					</div>
-				</div>
-			</footer>
+			<footer class="py-4 bg-light mt-auto"> ... </footer>
 		</div>
+		</main>
+
 	</div>
 
 	<!-- JS: Bootstrap Bundle -->
