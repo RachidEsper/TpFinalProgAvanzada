@@ -71,7 +71,7 @@ String passClass = (passErr != null) ? "form-control is-invalid" : "form-control
 									%>
 
 									<!-- IMPORTANTE: la acción pega a /login -->
-									<form method="post" action="<%=ctx%>/login" novalidate>
+									<form method="post" action="<%=ctx%>/LoginServlet" novalidate>
 										<div class="form-floating mb-3">
 											<input class="<%=emailClass%>" id="inputEmail" name="email"
 												type="email" placeholder="name@example.com"
