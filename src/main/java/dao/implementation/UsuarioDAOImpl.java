@@ -28,7 +28,7 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 				usuario.setIdUsuario(rs.getInt("id_usuario"));
 				usuario.setNombre(rs.getString("nombre"));
 				usuario.setEmail(rs.getString("email"));
-				usuario.setContrasenia(rs.getString("contrasenia"));
+				usuario.setPassword(rs.getString("contrasenia"));
 				usuario.setTelefono(rs.getString("telefono"));
 
 				// Utilizo el constructor vacioCrear el objeto TipoUsuario y asignarlo al
@@ -58,7 +58,7 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 				usuario.setIdUsuario(rs.getInt("id_usuario"));
 				usuario.setNombre(rs.getString("nombre"));
 				usuario.setEmail(rs.getString("email"));
-				usuario.setContrasenia(rs.getString("contrasenia"));
+				usuario.setPassword(rs.getString("contrasenia"));
 				usuario.setTelefono(rs.getString("telefono"));
 				// Utilizo el constructor vacioCrear el objeto TipoUsuario y asignarlo al
 				// usuario
@@ -81,7 +81,7 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 				PreparedStatement ps = connection.prepareStatement(SQL, PreparedStatement.RETURN_GENERATED_KEYS)) {
 			ps.setString(1, usuario.getNombre());
 			ps.setString(2, usuario.getEmail());
-			ps.setString(3, usuario.getContrasenia());
+			ps.setString(3, usuario.getPassword());
 			ps.setString(4, usuario.getTelefono());
 			ps.setInt(5, usuario.getTipo().getIdTipoUsuario());
 
@@ -112,7 +112,7 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 				PreparedStatement ps = connection.prepareStatement(SQL)) {
 			ps.setString(1, usuario.getNombre());
 			ps.setString(2, usuario.getEmail());
-			ps.setString(3, usuario.getContrasenia());
+			ps.setString(3, usuario.getPassword());
 			ps.setString(4, usuario.getTelefono());
 			ps.setInt(5, usuario.getTipo().getIdTipoUsuario());
 			ps.setInt(6, usuario.getIdUsuario());
@@ -188,7 +188,7 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 				usuario.setIdUsuario(rs.getInt("id_usuario"));
 				usuario.setNombre(rs.getString("nombre"));
 				usuario.setEmail(rs.getString("email"));
-				usuario.setContrasenia(rs.getString("contrasenia"));
+				usuario.setPassword(rs.getString("contrasenia"));
 				usuario.setTelefono(rs.getString("telefono"));
 				
 				TipoUsuario tipoUsuario = new TipoUsuario();
@@ -235,7 +235,7 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 				usuario.setIdUsuario(rs.getInt("id_usuario"));
 				usuario.setNombre(rs.getString("nombre"));
 				usuario.setEmail(rs.getString("email"));
-				usuario.setContrasenia(rs.getString("contrasenia"));
+				usuario.setPassword(rs.getString("contrasenia"));
 				usuario.setTelefono(rs.getString("telefono"));
 				
 				TipoUsuario tipoUsuario = new TipoUsuario();
@@ -264,7 +264,7 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 				usuario.setIdUsuario(rs.getInt("id_usuario"));
 				usuario.setNombre(rs.getString("nombre"));
 				usuario.setEmail(rs.getString("email"));
-				usuario.setContrasenia(rs.getString("contrasenia"));
+				usuario.setPassword(rs.getString("contrasenia"));
 				usuario.setTelefono(rs.getString("telefono"));
 				
 				TipoUsuario tipoUsuario = new TipoUsuario();

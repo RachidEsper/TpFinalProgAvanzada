@@ -42,8 +42,8 @@ public class ProductoDAOImpl implements IProductoDAO{
 	}
 
 	@Override
-	public Producto findById(String idProducto) {
-		final String SQL = "SELECT * FROM producto WHERE id_producto = ?";
+	public Producto findByName(String idProducto) {
+		final String SQL = "SELECT * FROM producto WHERE nombre = ?";
 		try (Connection connection = DbConfig.getInstance().getConnection();
 				PreparedStatement ps = connection.prepareStatement(SQL)) {
 			ps.setString(1, idProducto);
@@ -115,11 +115,11 @@ public class ProductoDAOImpl implements IProductoDAO{
 	}
 
 	@Override
-	public boolean deleteById(String idProducto) {
-		final String SQL = "DELETE FROM producto WHERE id_producto = ?";
+	public boolean deleteByName(String nombre) {
+		final String SQL = "DELETE FROM producto WHERE nombre = ?";
 		try (Connection connection = DbConfig.getInstance().getConnection();
 				PreparedStatement ps = connection.prepareStatement(SQL)) {
-			ps.setString(1, idProducto);
+			ps.setString(2, nombre);
 			int affectedRows = ps.executeUpdate();
 			return affectedRows > 0;
 		} catch (Exception e) {
@@ -297,7 +297,7 @@ public class ProductoDAOImpl implements IProductoDAO{
 
 	@Override
 	public Double calcularPrecioFinal(String idProducto) {
-		Producto producto = findById(idProducto);
+		Producto producto = findByName(idProducto);
 		if (producto != null) {
 			double precioOriginal = producto.getPrecio();
 			float descuento = producto.getDescuento();
