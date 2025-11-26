@@ -25,7 +25,7 @@ public class IAuthServiceImpl implements IAuthService {
 			if (user == null)
 				return null;
 
-			String password = user.getContrasenia(); // o getContraseniaHash()
+			String password = user.getPassword(); // o getContraseniaHash()
 			if (password != null && !password.isEmpty()) {
 				if (passwordPlano.equals(password)) {
 					return user;

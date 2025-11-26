@@ -15,10 +15,4 @@ public interface IAuthService {
 	
 	
 	
-	
-	
-	
-	
-	
-	
 }
