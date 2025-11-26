@@ -35,12 +35,21 @@ public class LogoutServlet extends HttpServlet {
 	/**
 	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
 	 */
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		 HttpSession session = request.getSession(false);
-		    if (session != null) session.invalidate();
+	  @Override
+	    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+	            throws ServletException, IOException {
 
-		    response.sendRedirect(request.getContextPath() + "/views/auth/login.jsp");
-	}
+	        // No crear sesión nueva si no existe
+	        HttpSession session = request.getSession(false);
 
+	        if (session != null) {
+	            // Esto ya elimina TODOS los atributos, no hace falta removeAttribute
+	            session.invalidate();
+	        }
+
+	        // Opcional: podrías agregar un mensaje tipo ?logout=ok
+	        response.sendRedirect(request.getContextPath() + "/views/auth/login.jsp");
+	    }
+
+	 
 }
