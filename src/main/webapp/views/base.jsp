@@ -2,6 +2,7 @@
 <%
 String ctx = request.getContextPath();
 System.out.println("Context Path: " + ctx);
+
 // Usuario en sesión y nombre a mostrar
 model.Usuario user = (model.Usuario) session.getAttribute("user");
 String nombre = null;
@@ -11,7 +12,17 @@ if (user != null) {
 	} catch (Exception ignore) {
 	}
 }
-// 🔹 NUEVO: página de contenido que va “adentro del layout”
+
+// 👉 calcular si es admin (id_tipo_usuario = 1)
+boolean isAdmin = false;
+try {
+	if (user != null && user.getTipo() != null) {
+		isAdmin = (user.getTipo().getIdTipoUsuario() == 1);
+	}
+} catch (Exception ignore) {
+}
+
+// página de contenido que va “adentro del layout”
 String contentPage = (String) request.getAttribute("contentPage");
 %>
 
@@ -106,9 +117,13 @@ String contentPage = (String) request.getAttribute("contentPage");
 							</div> Dashboard
 						</a>
 
+						<!-- ================== SECCIÓN ADMIN ================== -->
+						<%
+						if (isAdmin) {
+						%>
 						<div class="sb-sidenav-menu-heading">Operaciones</div>
 
-						<!-- Usuarios -->
+						<!-- Usuarios (solo admin) -->
 						<a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
 							data-bs-target="#menuUsuarios" aria-expanded="false"
 							aria-controls="menuUsuarios">
@@ -122,14 +137,13 @@ String contentPage = (String) request.getAttribute("contentPage");
 						<div class="collapse" id="menuUsuarios"
 							data-bs-parent="#sidenavAccordion">
 							<nav class="sb-sidenav-menu-nested nav">
-								<!-- AQUI el cambio -->
 								<a class="nav-link" href="<%=ctx%>/UsuarioListarServlet">Ver
 									Usuarios</a> <a class="nav-link"
 									href="<%=ctx%>/UsuarioCrearServlet">Alta Usuarios</a>
 							</nav>
 						</div>
 
-						<!-- Productos -->
+						<!-- Productos (CRUD admin) -->
 						<a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
 							data-bs-target="#menuProductos" aria-expanded="false"
 							aria-controls="menuProductos">
@@ -143,12 +157,13 @@ String contentPage = (String) request.getAttribute("contentPage");
 						<div class="collapse" id="menuProductos"
 							data-bs-parent="#sidenavAccordion">
 							<nav class="sb-sidenav-menu-nested nav">
-								<a class="nav-link" href="#">Ver Productos</a> <a
-									class="nav-link" href="#">Alta Productos</a>
+								<a class="nav-link" href="<%=ctx%>/ProductoListarServlet">Ver
+									Productos</a> <a class="nav-link"
+									href="<%=ctx%>/ProductoCrearServlet">Alta Productos</a>
 							</nav>
 						</div>
 
-						<!-- Pedidos -->
+						<!-- Pedidos (admin) -->
 						<a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
 							data-bs-target="#menuPedidos" aria-expanded="false"
 							aria-controls="menuPedidos">
@@ -162,26 +177,42 @@ String contentPage = (String) request.getAttribute("contentPage");
 						<div class="collapse" id="menuPedidos"
 							data-bs-parent="#sidenavAccordion">
 							<nav class="sb-sidenav-menu-nested nav">
-								<a class="nav-link" href="#">Ver Pedidos</a> <a class="nav-link"
-									href="#">Alta Pedidos</a>
+								<a class="nav-link" href="<%=ctx%>/PedidoListarServlet">Ver
+									Pedidos</a>
 							</nav>
 						</div>
+						<%
+						}
+						%>
 
-						<div class="sb-sidenav-menu-heading">Addons</div>
-						<a class="nav-link" href="#">
+						<!-- ================== SECCIÓN TIENDA (cualquier logueado) ================== -->
+						<div class="sb-sidenav-menu-heading">Tienda</div>
+
+						<a class="nav-link" href="<%=ctx%>/ListadoProductosServlet">
 							<div class="sb-nav-link-icon">
-								<i class="fas fa-chart-area"></i>
-							</div> Charts
-						</a> <a class="nav-link" href="#">
+								<i class="fas fa-box-open"></i>
+							</div> Productos
+						</a> <a class="nav-link" href="<%=ctx%>/CarritoServlet">
 							<div class="sb-nav-link-icon">
-								<i class="fas fa-table"></i>
-							</div> Tables
+								<i class="fas fa-shopping-cart"></i>
+							</div> Mi Carrito
+						</a> <a class="nav-link" href="<%=ctx%>/PedidoListarServlet">
+							<div class="sb-nav-link-icon">
+								<i class="fas fa-receipt"></i>
+							</div> Mis Pedidos
 						</a>
+
 					</div>
 				</div>
 				<div class="sb-sidenav-footer">
 					<div class="small">Logueado como:</div>
-					Admin
+					<%=(nombre != null ? nombre : "Invitado")%>
+					<%
+					if (isAdmin) {
+					%>
+					(Admin)<%
+					}
+					%>
 				</div>
 			</nav>
 		</div>
@@ -191,18 +222,20 @@ String contentPage = (String) request.getAttribute("contentPage");
 			<main>
 				<div class="container-fluid px-4">
 					<%
+					System.out.println("DBG contentPage = " + contentPage);
+					System.out.println("DBG usuario attr = " + request.getAttribute("usuario"));
+
 					// Si no se especificó contentPage, mostramos el dashboard por defecto.
 					if (contentPage == null) {
 					%>
 					<div class="py-5">
 						<h1 class="display-5 fw-semibold mb-3">
 							¡Bienvenido,
-							<%=nombre%>!
+							<%=(nombre != null ? nombre : "")%>!
 						</h1>
 						<p class="fs-5 text-muted">
 							Esta es tu tienda <strong>VentasMN</strong>...
 						</p>
-						<!-- resto del texto de bienvenida -->
 					</div>
 					<%
 					} else {
@@ -216,8 +249,6 @@ String contentPage = (String) request.getAttribute("contentPage");
 
 			<footer class="py-4 bg-light mt-auto"> ... </footer>
 		</div>
-		</main>
-
 	</div>
 
 	<!-- JS: Bootstrap Bundle -->

@@ -7,6 +7,7 @@ public class Producto {
 	private Double precio;
 	private float descuento;
 	private String urlImagen;
+	private int stock;
 	private int idCategoria;
 
 	public Producto(String idProducto, String nombre, String descripcion, Double precio, float descuento,
@@ -79,6 +80,14 @@ public class Producto {
 
 	public void setIdCategoria(int idCategoria) {
 		this.idCategoria = idCategoria;
+	}
+
+	public int getStock() {
+		return stock;
+	}
+
+	public void setStock(int stock) {
+		this.stock = stock;
 	}
 
 }

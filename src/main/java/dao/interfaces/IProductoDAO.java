@@ -8,12 +8,13 @@ public interface IProductoDAO {
 
 	// CRUD básico
 	List<Producto> findAll();
-	Producto findByName(String idProducto);
+	Producto findById(String idProducto);
 	Producto create(Producto producto);
 	Producto update(Producto producto);
-	boolean deleteByName(String nombre);
+	boolean deleteById(String idProducto);
 	boolean existsById(String nombre);
 	int count();
+	boolean deleteByName(String nombre);
 	
 	// Métodos específicos de negocio para Producto
 	List<Producto> findByCategoria(int idCategoria);

@@ -31,6 +31,7 @@ public class ProductoDAOImpl implements IProductoDAO{
 				producto.setPrecio(rs.getDouble("precio"));
 				producto.setDescuento(rs.getFloat("descuento"));
 				producto.setUrlImagen(rs.getString("imagen_url"));
+				producto.setStock(rs.getInt("stock"));
 				producto.setIdCategoria(rs.getInt("id_categoria"));
 				productos.add(producto);
 			}
@@ -42,8 +43,8 @@ public class ProductoDAOImpl implements IProductoDAO{
 	}
 
 	@Override
-	public Producto findByName(String idProducto) {
-		final String SQL = "SELECT * FROM producto WHERE nombre = ?";
+	public Producto findById(String idProducto) {
+		final String SQL = "SELECT * FROM producto WHERE id_producto = ?";
 		try (Connection connection = DbConfig.getInstance().getConnection();
 				PreparedStatement ps = connection.prepareStatement(SQL)) {
 			ps.setString(1, idProducto);
@@ -56,6 +57,7 @@ public class ProductoDAOImpl implements IProductoDAO{
 				producto.setPrecio(rs.getDouble("precio"));
 				producto.setDescuento(rs.getFloat("descuento"));
 				producto.setUrlImagen(rs.getString("imagen_url"));
+				producto.setStock(rs.getInt("stock"));
 				producto.setIdCategoria(rs.getInt("id_categoria"));
 				return producto;
 			}
@@ -68,7 +70,7 @@ public class ProductoDAOImpl implements IProductoDAO{
 
 	@Override
 	public Producto create(Producto producto) {
-		final String SQL = "INSERT INTO producto (id_producto, nombre, descripcion, precio, descuento, imagen_url, id_categoria) VALUES (?, ?, ?, ?, ?, ?, ?)";
+		final String SQL = "INSERT INTO producto (id_producto, nombre, descripcion, precio, descuento, imagen_url,stock, id_categoria) VALUES (?, ?, ?, ?, ?, ?, ? ,?)";
 		try (Connection connection = DbConfig.getInstance().getConnection();
 				PreparedStatement ps = connection.prepareStatement(SQL)) {
 			ps.setString(1, producto.getIdProducto());
@@ -76,8 +78,9 @@ public class ProductoDAOImpl implements IProductoDAO{
 			ps.setString(3, producto.getDescripcion());
 			ps.setDouble(4, producto.getPrecio());
 			ps.setFloat(5, producto.getDescuento());
-			ps.setString(6, producto.getUrlImagen());
-			ps.setInt(7, producto.getIdCategoria());
+			ps.setInt(6, producto.getStock());
+			ps.setString(7, producto.getUrlImagen());
+			ps.setInt(8, producto.getIdCategoria());
 			
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows > 0) {
@@ -92,7 +95,7 @@ public class ProductoDAOImpl implements IProductoDAO{
 
 	@Override
 	public Producto update(Producto producto) {
-		final String SQL = "UPDATE producto SET nombre = ?, descripcion = ?, precio = ?, descuento = ?, imagen_url = ?, idCategoria = ? WHERE id_producto = ?";
+		final String SQL = "UPDATE producto SET nombre = ?, descripcion = ?, precio = ?, descuento = ?, imagen_url = ?, stock = ? ,id_categoria = ? WHERE id_producto = ?";
 		try (Connection connection = DbConfig.getInstance().getConnection();
 				PreparedStatement ps = connection.prepareStatement(SQL)) {
 			ps.setString(1, producto.getNombre());
@@ -100,8 +103,9 @@ public class ProductoDAOImpl implements IProductoDAO{
 			ps.setDouble(3, producto.getPrecio());
 			ps.setFloat(4, producto.getDescuento());
 			ps.setString(5, producto.getUrlImagen());
-			ps.setInt(6, producto.getIdCategoria());
-			ps.setString(7, producto.getIdProducto());
+			ps.setInt(6, producto.getStock());
+			ps.setInt(7, producto.getIdCategoria());
+			ps.setString(8, producto.getIdProducto());
 			
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows > 0) {
@@ -115,11 +119,11 @@ public class ProductoDAOImpl implements IProductoDAO{
 	}
 
 	@Override
-	public boolean deleteByName(String nombre) {
-		final String SQL = "DELETE FROM producto WHERE nombre = ?";
+	public boolean deleteById(String idProducto) {
+		final String SQL = "DELETE FROM producto WHERE id_producto = ?";
 		try (Connection connection = DbConfig.getInstance().getConnection();
 				PreparedStatement ps = connection.prepareStatement(SQL)) {
-			ps.setString(2, nombre);
+			ps.setString(1, idProducto);
 			int affectedRows = ps.executeUpdate();
 			return affectedRows > 0;
 		} catch (Exception e) {
@@ -177,6 +181,7 @@ public class ProductoDAOImpl implements IProductoDAO{
 				producto.setPrecio(rs.getDouble("precio"));
 				producto.setDescuento(rs.getFloat("descuento"));
 				producto.setUrlImagen(rs.getString("imagen_url"));
+				producto.setStock(rs.getInt("stock"));
 				producto.setIdCategoria(rs.getInt("id_categoria"));
 				productos.add(producto);
 			}
@@ -203,6 +208,7 @@ public class ProductoDAOImpl implements IProductoDAO{
 				producto.setPrecio(rs.getDouble("precio"));
 				producto.setDescuento(rs.getFloat("descuento"));
 				producto.setUrlImagen(rs.getString("imagen_url"));
+				producto.setStock(rs.getInt("stock"));
 				producto.setIdCategoria(rs.getInt("id_categoria"));
 				productos.add(producto);
 			}
@@ -230,6 +236,7 @@ public class ProductoDAOImpl implements IProductoDAO{
 				producto.setPrecio(rs.getDouble("precio"));
 				producto.setDescuento(rs.getFloat("descuento"));
 				producto.setUrlImagen(rs.getString("imagen_url"));
+				producto.setStock(rs.getInt("stock"));
 				producto.setIdCategoria(rs.getInt("idCategoria"));
 				productos.add(producto);
 			}
@@ -255,6 +262,7 @@ public class ProductoDAOImpl implements IProductoDAO{
 				producto.setPrecio(rs.getDouble("precio"));
 				producto.setDescuento(rs.getFloat("descuento"));
 				producto.setUrlImagen(rs.getString("imagen_url"));
+				producto.setStock(rs.getInt("stock"));
 				producto.setIdCategoria(rs.getInt("idCategoria"));
 				productos.add(producto);
 			}
@@ -297,7 +305,7 @@ public class ProductoDAOImpl implements IProductoDAO{
 
 	@Override
 	public Double calcularPrecioFinal(String idProducto) {
-		Producto producto = findByName(idProducto);
+		Producto producto = findById(idProducto);
 		if (producto != null) {
 			double precioOriginal = producto.getPrecio();
 			float descuento = producto.getDescuento();
@@ -305,6 +313,20 @@ public class ProductoDAOImpl implements IProductoDAO{
 			return precioFinal;
 		}
 		return null;
+	}
+
+	@Override
+	public boolean deleteByName(String nombre) {
+		final String SQL = "DELETE FROM producto WHERE nombre = ?";
+		try (Connection connection = DbConfig.getInstance().getConnection();
+				PreparedStatement ps = connection.prepareStatement(SQL)) {
+			ps.setString(2, nombre);
+			int affectedRows = ps.executeUpdate();
+			return affectedRows > 0;
+		} catch (Exception e) {
+			System.out.println("Error al eliminar el producto: " + e.getMessage());
+			return false;
+		}
 	}
 
 }

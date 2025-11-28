@@ -81,28 +81,32 @@ public class UsuarioServiceImpl implements IUsuarioService{
 	}
 
 	@Override
-	public Usuario updateUsuario(String nombre,String email,String password,String telefono,int tipo) {
-		Usuario nuevoUsuario = new Usuario();
-		IUsuarioDAO usuarioDAO = new UsuarioDAOImpl();
-		
-		// TODO Auto-generated method stub
-		nuevoUsuario.setNombre(nombre);
-		nuevoUsuario.setEmail(email);
-		nuevoUsuario.setPassword(password);
-		TipoUsuario tipoUsuario = new TipoUsuario();
-		tipoUsuario.setIdTipoUsuario(tipo);
-		nuevoUsuario.setTipo(tipoUsuario);
-		usuarioDAO.update(nuevoUsuario);
-		return nuevoUsuario;
-	
-		
-		}
+	public boolean updateUsuario(int id, String nombre, String email,
+	                             String password, String telefono, int tipo) {
+
+	    IUsuarioDAO usuarioDAO = new UsuarioDAOImpl();
+
+	    Usuario nuevoUsuario = new Usuario();
+	    nuevoUsuario.setIdUsuario(id);          // 👈 FUNDAMENTAL
+	    nuevoUsuario.setNombre(nombre);
+	    nuevoUsuario.setEmail(email);
+	    nuevoUsuario.setPassword(password);
+	    nuevoUsuario.setTelefono(telefono);     // 👈 usar el parámetro
+
+	    TipoUsuario tipoUsuario = new TipoUsuario();
+	    tipoUsuario.setIdTipoUsuario(tipo);
+	    nuevoUsuario.setTipo(tipoUsuario);
+
+	    Usuario actualizado = usuarioDAO.update(nuevoUsuario);
+	    return (actualizado != null);           // 👈 true solo si el DAO actualizó
+	}
+
 
 	@Override
-	public void deleteUsuario(int id) {
+	public boolean deleteUsuario(int id) {
 		IUsuarioDAO usuarioDAO = new UsuarioDAOImpl();
 		usuarioDAO.deleteById(id);
-		
+		return true;
 	}
 
 	@Override

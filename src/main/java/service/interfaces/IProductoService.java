@@ -16,11 +16,15 @@ public interface IProductoService {
 	private int idCategoria;
 	 */
 	
-	Producto createProducto(String nombre,String descripcion,Double precio,float descuento,String urlImagen,int idCategoria);
+	Producto createProducto(String nombre,String descripcion,Double precio,float descuento,String urlImagen,int stock,int idCategoria);
 	Producto findByName(String nombre);
-	Producto updateProducto(String nombre,String descripcion,Double precio,float descuento,String urlImagen,int idCategoria);
+	Producto updateProducto(String nombre,String descripcion,Double precio,float descuento,String urlImagen,int stock,int idCategoria);
 	void deleteByName(String nombre);
 	List<Producto> findAll();
 	
+	Producto findById(String idProducto);
+	Producto updateProducto(Producto producto);
+	boolean deleteById(String idProducto);
+
 
 }

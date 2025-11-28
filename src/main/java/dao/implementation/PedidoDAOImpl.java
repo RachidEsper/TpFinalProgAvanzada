@@ -239,7 +239,7 @@ public class PedidoDAOImpl implements IPedidoDAO {
 
 	@Override
 	public List<DetallePedido> findDetallesByPedidoId(int idPedido) {
-		final String SQL = "SELECT * FROM detallepedido WHERE id_pedido = ?";
+		final String SQL = "SELECT * FROM detalle_pedido WHERE id_pedido = ?";
 		List<DetallePedido> detalles = new ArrayList<>();
 		try (Connection connection = DbConfig.getInstance().getConnection();
 				PreparedStatement ps = connection.prepareStatement(SQL)) {
@@ -249,7 +249,7 @@ public class PedidoDAOImpl implements IPedidoDAO {
 				DetallePedido detalle = new DetallePedido();
 				detalle.setIdDetalle(rs.getInt("id_detalle"));
 				detalle.setCantidad(rs.getInt("cantidad"));
-				detalle.setPrecioUnitario(rs.getDouble("precioUnitario"));
+				detalle.setPrecioUnitario(rs.getDouble("precio_unitario"));
 				
 				// Crear objeto Pedido con solo el ID
 				Pedido pedido = new Pedido();
@@ -305,7 +305,7 @@ public class PedidoDAOImpl implements IPedidoDAO {
 
 	@Override
 	public Double calcularTotalPedido(int idPedido) {
-		final String SQL = "SELECT SUM(cantidad * precioUnitario) as total FROM detalle_pedido WHERE id_pedido = ?";
+		final String SQL = "SELECT SUM(cantidad * precio_unitario) as total FROM detalle_pedido WHERE id_pedido = ?";
 		try (Connection connection = DbConfig.getInstance().getConnection();
 				PreparedStatement ps = connection.prepareStatement(SQL)) {
 			ps.setInt(1, idPedido);

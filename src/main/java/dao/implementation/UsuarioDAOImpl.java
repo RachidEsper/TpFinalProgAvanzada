@@ -3,6 +3,7 @@ package dao.implementation;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.List;
 
 import config.DbConfig;
@@ -48,31 +49,40 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 
 	@Override
 	public Usuario findById(int idUsuario) {
-		String SQL = "SELECT * FROM usuario WHERE id_usuario = ?";
-		try (Connection connection = DbConfig.getInstance().getConnection();
-				PreparedStatement ps = connection.prepareStatement(SQL);
-				ResultSet rs = ps.executeQuery()) {
-			ps.setInt(1, idUsuario);
-			if (rs.next()) {
-				Usuario usuario = new Usuario();
-				usuario.setIdUsuario(rs.getInt("id_usuario"));
-				usuario.setNombre(rs.getString("nombre"));
-				usuario.setEmail(rs.getString("email"));
-				usuario.setPassword(rs.getString("contrasenia"));
-				usuario.setTelefono(rs.getString("telefono"));
-				// Utilizo el constructor vacioCrear el objeto TipoUsuario y asignarlo al
-				// usuario
-				TipoUsuario tipoUsuario = new TipoUsuario();
-				tipoUsuario.setIdTipoUsuario(rs.getInt("id_tipo_usuario"));
-				usuario.setTipo(tipoUsuario);
-				return usuario;
-			}
+	    String SQL = "SELECT * FROM usuario WHERE id_usuario = ?";
 
-		} catch (Exception e) {
-			System.out.println("Error al obtener el usuario por ID: " + e.getMessage());
-		}
-		return null;
+	    try (Connection connection = DbConfig.getInstance().getConnection();
+	         PreparedStatement ps = connection.prepareStatement(SQL)) {
+
+	        // 1) Setear parámetro ANTES del executeQuery
+	        ps.setInt(1, idUsuario);
+
+	        // 2) Ejecutar la consulta
+	        try (ResultSet rs = ps.executeQuery()) {
+
+	            if (rs.next()) {
+	                Usuario usuario = new Usuario();
+	                usuario.setIdUsuario(rs.getInt("id_usuario"));
+	                usuario.setNombre(rs.getString("nombre"));
+	                usuario.setEmail(rs.getString("email"));
+	                usuario.setPassword(rs.getString("contrasenia"));
+	                usuario.setTelefono(rs.getString("telefono"));
+
+	                TipoUsuario tipoUsuario = new TipoUsuario();
+	                tipoUsuario.setIdTipoUsuario(rs.getInt("id_tipo_usuario"));
+	                usuario.setTipo(tipoUsuario);
+
+	                return usuario;
+	            }
+	        }
+
+	    } catch (SQLException e) {
+	        System.out.println("Error al obtener el usuario por ID: " + e.getMessage());
+	    }
+
+	    return null;
 	}
+
 
 	@Override
 	public Usuario create(Usuario usuario) {
@@ -131,7 +141,7 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 
 	@Override
 	public boolean deleteById(int idUsuario) {
-		final String SQL = "DELETE FROM usuario WHERE idUsuario = ?";
+		final String SQL = "DELETE FROM usuario WHERE id_usuario = ?";
 		try (Connection connection = DbConfig.getInstance().getConnection();
 				PreparedStatement ps = connection.prepareStatement(SQL)) {
 			ps.setInt(1, idUsuario);
@@ -145,7 +155,7 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 
 	@Override
 	public boolean existsById(int idUsuario) {
-		final String SQL = "SELECT COUNT(*) FROM usuario WHERE idUsuario = ?";
+		final String SQL = "SELECT COUNT(*) FROM usuario WHERE id_usuario = ?";
 		try (Connection connection = DbConfig.getInstance().getConnection();
 				PreparedStatement ps = connection.prepareStatement(SQL)) {
 			ps.setInt(1, idUsuario);
@@ -224,7 +234,7 @@ public class UsuarioDAOImpl implements IUsuarioDAO {
 
 	@Override
 	public List<Usuario> findByTipo(TipoUsuario tipo) {
-		final String SQL = "SELECT * FROM usuario WHERE tipoUsuarioId = ?";
+		final String SQL = "SELECT * FROM usuario WHERE id_tipo_usuario = ?";
 		List<Usuario> usuarios = new java.util.ArrayList<>();
 		try (Connection connection = DbConfig.getInstance().getConnection();
 				PreparedStatement ps = connection.prepareStatement(SQL)) {

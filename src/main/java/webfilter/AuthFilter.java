@@ -1,11 +1,13 @@
 package webfilter;
 
 import java.io.IOException;
+
 import jakarta.servlet.*;
 import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.Usuario;   // 👈 importante
 
 @WebFilter("/*")
 public class AuthFilter implements Filter {
@@ -21,7 +23,7 @@ public class AuthFilter implements Filter {
         String ctx  = req.getContextPath();
         String path = req.getRequestURI().substring(ctx.length());
 
-        // 1) Rutas públicas (no piden login)
+        // 1) RUTAS PÚBLICAS (no requieren login)
         boolean recursoEstatico =
                    path.startsWith("/assets/")
                 || path.startsWith("/css/")
@@ -33,14 +35,18 @@ public class AuthFilter implements Filter {
 
         boolean esLogout = path.equals("/LogoutServlet");
 
-        if (recursoEstatico || esLogin || esLogout) {
+        boolean esRaiz   = path.equals("/") || path.isEmpty(); // opcional
+
+        if (recursoEstatico || esLogin || esLogout || esRaiz) {
             chain.doFilter(request, response);
             return;
         }
 
-        // 2) Rutas protegidas: verificar sesión
+        // 2) RUTAS PROTEGIDAS: verificar que haya sesión
         HttpSession session = req.getSession(false);
-        Object user = (session != null) ? session.getAttribute("user") : null;
+        Usuario user = (session != null)
+                ? (Usuario) session.getAttribute("user")
+                : null;
 
         if (user == null) {
             // No logueado → al login
@@ -48,12 +54,37 @@ public class AuthFilter implements Filter {
             return;
         }
 
-        // 3) Usuario logueado → marcar respuesta como NO cacheable
+        // 3) Usuario logueado → calcular rol
+        boolean isAdmin = false;
+        if (user.getTipo() != null) {
+            isAdmin = (user.getTipo().getIdTipoUsuario() == 1);
+        }
+
+        boolean adminOnly =
+                path.startsWith("/PedidoCrudServlet")
+             || path.startsWith("/PedidoEditarServlet")
+             || path.startsWith("/PedidoEliminarServlet")
+             || path.startsWith("/ProductoCrearServlet")
+             || path.startsWith("/ProductoCrudServlet")
+             || path.startsWith("/ProductoEditarServlet")
+             || path.startsWith("/ProductoEliminarServlet")
+             || path.startsWith("/UsuarioCrearServlet")
+             || path.startsWith("/UsuarioCrudServlet")
+             || path.startsWith("/UsuarioEditarServlet")
+             || path.startsWith("/UsuarioEliminarServlet")
+             || path.startsWith("/UsuarioListarServlet");
+
+        if (adminOnly && !isAdmin) {
+        	res.sendRedirect(ctx + "/views/base.jsp");
+            return;
+        }
+
+        // 5) Marcar la respuesta como NO cacheable (para que no vuelva con el back del navegador)
         res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1
         res.setHeader("Pragma", "no-cache");                                   // HTTP 1.0
         res.setDateHeader("Expires", 0);                                       // Proxies
 
-        // 4) Seguir al siguiente filtro / servlet
+        // 6) Seguir con la cadena
         chain.doFilter(request, response);
     }
 }
