@@ -6,185 +6,148 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import model.TipoUsuario;
 import model.Usuario;
 import service.implementation.UsuarioServiceImpl;
 import service.interfaces.IUsuarioService;
 
-import java.io.IOException;
-
-import dao.implementation.UsuarioDAOImpl;
-import dao.interfaces.IUsuarioDAO;
-
-/**
- * Servlet implementation class UsuarioEditarServlet
- */
-
-/*
- * Rol del servlet:
-
-GET → Mostrar el formulario de edición, precargado con los datos del usuario.
-
-POST → Recibir los campos editados, validar, actualizar en DB, y redirigir de nuevo al listado (o volver al formulario con errores).
- */
-
-
-
-
 @WebServlet("/UsuarioEditarServlet")
 public class UsuarioEditarServlet extends HttpServlet {
-	private static final long serialVersionUID = 1L;
-       
-    /**
-     * @see HttpServlet#HttpServlet()
-     */
+    private static final long serialVersionUID = 1L;
+
+    private final IUsuarioService usuarioService = new UsuarioServiceImpl();
+
     public UsuarioEditarServlet() {
         super();
-        // TODO Auto-generated constructor stub
     }
 
-	/**
-	 * @see HttpServlet#doGet(HttpServletRequest request, HttpServletResponse response)
-	 */
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		// TODO Auto-generated method stub
-		 IUsuarioService sv = new UsuarioServiceImpl();
-		 
-		 String idParam=request.getParameter("id");
-		 
-		 if(idParam==null || idParam.isBlank()) {
-			 // Si no encontro id redirige a listado de usuarios
-			 response.sendRedirect(request.getContextPath() + "/UsuarioListarServlet");
-			 return;
-		 }
-		 
-		 int id = Integer.parseInt(idParam);
-		 Usuario u=sv.findById(id);
-		 
-		 if (u == null) {
-	            // flashError en sesión si no lo encuentra
-	            HttpSession session = request.getSession();
-	            session.setAttribute("flashError", "El usuario no existe.");
-	            response.sendRedirect(request.getContextPath() + "/UsuarioListarServlet");
-	            return;
-	        }
-		 	// Enviás el usuario a la vista
-	        request.setAttribute("usuario", u);
+    /**
+     * GET → muestra el formulario de edición con los datos del usuario.
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-	        // Indicás qué contenido va dentro del layout
-	        request.setAttribute("contentPage", "/views/admin/usuarioeditar.jsp");
-	        request.getRequestDispatcher("/views/base.jsp").forward(request, response);
-		
-	}
+        request.setCharacterEncoding("UTF-8");
+        String ctx = request.getContextPath();
 
-	/**
-	 * @see HttpServlet#doPost(HttpServletRequest request, HttpServletResponse response)
-	 */
-	@Override
-	protected void doPost(HttpServletRequest request, HttpServletResponse response)
-	        throws ServletException, IOException {
+        String idParam = request.getParameter("id");
 
-	    request.setCharacterEncoding("UTF-8");
-	    String ctx = request.getContextPath();
+        if (idParam == null || idParam.isBlank()) {
+            // ID inválido → volvemos al listado
+            HttpSession session = request.getSession();
+            session.setAttribute("flashError", "ID de usuario inválido.");
+            response.sendRedirect(ctx + "/UsuarioListarServlet");
+            return;
+        }
 
-	    IUsuarioService sv = new UsuarioServiceImpl();
+        int id;
+        try {
+            id = Integer.parseInt(idParam);
+        } catch (NumberFormatException e) {
+            HttpSession session = request.getSession();
+            session.setAttribute("flashError", "Formato de ID inválido.");
+            response.sendRedirect(ctx + "/UsuarioListarServlet");
+            return;
+        }
 
-	    // 1) Leer parámetros del form
-	    String idParam   = request.getParameter("id");
-	    String nombre    = request.getParameter("nombre");
-	    String email     = request.getParameter("email");
-	    String telefono  = request.getParameter("telefono");
-	    String tipoParam = request.getParameter("idTipoUsuario");
-	    String pass      = request.getParameter("password");
+        Usuario u = usuarioService.findById(id);
 
-	    // 2) Validaciones básicas
-	    java.util.Map<String, String> errors = new java.util.HashMap<>();
+        if (u == null) {
+            HttpSession session = request.getSession();
+            session.setAttribute("flashError", "El usuario no existe.");
+            response.sendRedirect(ctx + "/UsuarioListarServlet");
+            return;
+        }
 
-	    if (idParam == null || idParam.isBlank()) {
-	        // Algo raro: no vino el id → vuelvo al listado
-	        response.sendRedirect(ctx + "/UsuarioListarServlet");
-	        return;
-	    }
-	    int id = Integer.parseInt(idParam);
+        // Enviamos el usuario al JSP
+        request.setAttribute("usuario", u);
+        request.setAttribute("contentPage", "/views/admin/usuarioeditar.jsp");
+        request.getRequestDispatcher("/views/base.jsp").forward(request, response);
+    }
 
-	    if (nombre == null || nombre.isBlank()) {
-	        errors.put("nombre", "El nombre es obligatorio.");
-	    }
+    /**
+     * POST → procesa el formulario, valida y actualiza el usuario.
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
 
-	    if (email == null || email.isBlank()) {
-	        errors.put("email", "El email es obligatorio.");
-	    }
+        request.setCharacterEncoding("UTF-8");
+        String ctx = request.getContextPath();
 
-	    if (tipoParam == null || tipoParam.isBlank()) {
-	        errors.put("idTipoUsuario", "Debe seleccionar un tipo de usuario.");
-	    }
+        // 1) Leer parámetros del form
+        String idParam   = request.getParameter("id");
+        String nombre    = request.getParameter("nombre");
+        String email     = request.getParameter("email");
+        String telefono  = request.getParameter("telefono");
+        String tipoParam = request.getParameter("idTipoUsuario");
+        String pass      = request.getParameter("password");
 
-	    // 3) Si hay errores → volver al form con lo que el usuario cargó
-	    if (!errors.isEmpty()) {
-	        Usuario uForm = new Usuario();
-	        uForm.setIdUsuario(id);
-	        uForm.setNombre(nombre);
-	        uForm.setEmail(email);
-	        uForm.setTelefono(telefono);
-	        // No tiene sentido mostrar la contraseña, así que no la usamos en el JSP
+        // 2) Delegar validación y actualización al service
+        Map<String, String> errors = new HashMap<>();
 
-	        if (tipoParam != null && !tipoParam.isBlank()) {
-	            TipoUsuario t = new TipoUsuario();
-	            t.setIdTipoUsuario(Integer.parseInt(tipoParam));
-	            uForm.setTipo(t);
-	        }
+        Usuario actualizado = usuarioService.actualizarUsuarioDesdeFormulario(
+                idParam,
+                nombre,
+                email,
+                telefono,
+                tipoParam,
+                pass,
+                errors
+        );
 
-	        request.setAttribute("usuario", uForm);
-	        request.setAttribute("errors", errors);
-	        request.setAttribute("globalError", "Revisá los campos marcados.");
+        // 3) Si hubo problemas → volver al formulario
+        if (actualizado == null) {
 
-	        request.setAttribute("contentPage", "/views/admin/usuarioeditar.jsp");
-	        request.getRequestDispatcher("/views/base.jsp").forward(request, response);
-	        return;
-	    }
+            if (!errors.isEmpty()) {
+                // Mensaje global
+                String global = errors.get("global");
+                if (global == null) {
+                    global = "Revisá los campos marcados.";
+                }
+                request.setAttribute("globalError", global);
+                request.setAttribute("errors", errors);
 
-	    // 4) Sin errores: buscar el usuario original en BD
-	    Usuario uDb = sv.findById(id);
-	    if (uDb == null) {
-	        HttpSession session = request.getSession();
-	        session.setAttribute("flashError", "El usuario ya no existe.");
-	        response.sendRedirect(ctx + "/UsuarioListarServlet");
-	        return;
-	    }
+                // Usuario "form" para repoblar campos con lo que el usuario escribió
+                Usuario uForm = new Usuario();
+                try {
+                    uForm.setIdUsuario(Integer.parseInt(idParam));
+                } catch (Exception ignored) {}
 
-	    // 5) Decidir qué contraseña guardar:
-	    //    - si el admin escribió algo, usamos esa
-	    //    - si dejó vacío, mantenemos la actual
-	    String passwordFinal;
-	    if (pass != null && !pass.isBlank()) {
-	        passwordFinal = pass;
-	    } else {
-	        passwordFinal = uDb.getPassword();  // la que ya estaba en BD
-	    }
+                uForm.setNombre(nombre);
+                uForm.setEmail(email);
+                uForm.setTelefono(telefono);
 
-	    int tipoInt = Integer.parseInt(tipoParam);
+                if (tipoParam != null && !tipoParam.isBlank()) {
+                    try {
+                        TipoUsuario t = new TipoUsuario();
+                        t.setIdTipoUsuario(Integer.parseInt(tipoParam));
+                        uForm.setTipo(t);
+                    } catch (NumberFormatException ignored) {}
+                }
 
-	    // 6) Guardar cambios a través del service
-	    boolean ok = sv.updateUsuario(
-	            id,
-	            nombre,
-	            email,
-	            passwordFinal,
-	            telefono,
-	            tipoInt
-	    );
+                request.setAttribute("usuario", uForm);
+                request.setAttribute("contentPage", "/views/admin/usuarioeditar.jsp");
+                request.getRequestDispatcher("/views/base.jsp").forward(request, response);
+                return;
+            }
 
-	    HttpSession session = request.getSession();
-	    if (ok) {
-	        session.setAttribute("flashSuccess", "Usuario actualizado correctamente.");
-	    } else {
-	        session.setAttribute("flashError", "No se pudo actualizar el usuario.");
-	    }
+            // Si no hay errores específicos pero no se actualizó → fallo raro
+            HttpSession session = request.getSession();
+            session.setAttribute("flashError", "No se pudo actualizar el usuario.");
+            response.sendRedirect(ctx + "/UsuarioListarServlet");
+            return;
+        }
 
-	    // 7) Volver al listado
-	    response.sendRedirect(ctx + "/UsuarioListarServlet");
-	}
-
-
-
+        // 4) OK → mensaje flash + redirect al listado
+        HttpSession session = request.getSession();
+        session.setAttribute("flashSuccess", "Usuario actualizado correctamente.");
+        response.sendRedirect(ctx + "/UsuarioListarServlet");
+    }
 }

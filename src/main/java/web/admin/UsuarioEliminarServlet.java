@@ -55,7 +55,7 @@ public class UsuarioEliminarServlet extends HttpServlet {
 	        int id = Integer.parseInt(idParam);
 
 	        IUsuarioService sv = new UsuarioServiceImpl();
-	        boolean eliminar = sv.deleteUsuario(id);   // 👈 ahora vemos este método
+	        boolean eliminar = sv.deleteUsuario(id); 
 
 	        if (eliminar) {
 	            session.setAttribute("flashSuccess", "Usuario eliminado correctamente.");

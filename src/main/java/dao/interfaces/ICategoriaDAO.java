@@ -15,9 +15,5 @@ public interface ICategoriaDAO {
 	Categoria findbyname(String nombre);
 	int count();
 	
-	
-	/*
-	 * que pasa si en vez de hacer una interfaz por cada dao,
-	 * hago una interfaz generica
-	 */
+
 }

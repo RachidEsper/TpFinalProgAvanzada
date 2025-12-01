@@ -78,8 +78,8 @@ public class ProductoDAOImpl implements IProductoDAO{
 			ps.setString(3, producto.getDescripcion());
 			ps.setDouble(4, producto.getPrecio());
 			ps.setFloat(5, producto.getDescuento());
-			ps.setInt(6, producto.getStock());
-			ps.setString(7, producto.getUrlImagen());
+			ps.setString(6, producto.getUrlImagen());
+			ps.setInt(7, producto.getStock());
 			ps.setInt(8, producto.getIdCategoria());
 			
 			int affectedRows = ps.executeUpdate();

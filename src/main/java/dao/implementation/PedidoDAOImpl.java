@@ -33,12 +33,12 @@ public class PedidoDAOImpl implements IPedidoDAO {
 				pedido.setEstado(rs.getBoolean("estado"));
 				pedido.setDireccionEntrega(rs.getString("direccion_entrega"));
 				pedido.setTotal(rs.getDouble("total"));
-				
+
 				// Crear objeto Usuario con solo el ID
 				Usuario usuario = new Usuario();
 				usuario.setIdUsuario(rs.getInt("id_usuario"));
 				pedido.setUsuario(usuario);
-				
+
 				pedidos.add(pedido);
 			}
 			return pedidos;
@@ -62,12 +62,12 @@ public class PedidoDAOImpl implements IPedidoDAO {
 				pedido.setEstado(rs.getBoolean("estado"));
 				pedido.setDireccionEntrega(rs.getString("direccion_entrega"));
 				pedido.setTotal(rs.getDouble("total"));
-				
+
 				// Crear objeto Usuario con solo el ID
 				Usuario usuario = new Usuario();
 				usuario.setIdUsuario(rs.getInt("id_usuario"));
 				pedido.setUsuario(usuario);
-				
+
 				return pedido;
 			}
 			return null;
@@ -87,12 +87,12 @@ public class PedidoDAOImpl implements IPedidoDAO {
 			ps.setBoolean(3, pedido.getEstado());
 			ps.setString(4, pedido.getDireccionEntrega());
 			ps.setDouble(5, pedido.getTotal());
-			
+
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows == 0) {
 				throw new Exception("Creating pedido failed, no rows affected.");
 			}
-			
+
 			try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
 				if (generatedKeys.next()) {
 					pedido.setIdPedido(generatedKeys.getInt(1));
@@ -118,7 +118,7 @@ public class PedidoDAOImpl implements IPedidoDAO {
 			ps.setString(4, pedido.getDireccionEntrega());
 			ps.setDouble(5, pedido.getTotal());
 			ps.setInt(6, pedido.getIdPedido());
-			
+
 			int affectedRows = ps.executeUpdate();
 			if (affectedRows > 0) {
 				return pedido;
@@ -192,12 +192,12 @@ public class PedidoDAOImpl implements IPedidoDAO {
 				pedido.setEstado(rs.getBoolean("estado"));
 				pedido.setDireccionEntrega(rs.getString("direccion_entrega"));
 				pedido.setTotal(rs.getDouble("total"));
-				
+
 				// Crear objeto Usuario con solo el ID
 				Usuario usuario = new Usuario();
 				usuario.setIdUsuario(rs.getInt("id_usuario"));
 				pedido.setUsuario(usuario);
-				
+
 				pedidos.add(pedido);
 			}
 			return pedidos;
@@ -222,12 +222,12 @@ public class PedidoDAOImpl implements IPedidoDAO {
 				pedido.setEstado(rs.getBoolean("estado"));
 				pedido.setDireccionEntrega(rs.getString("direccion_entrega"));
 				pedido.setTotal(rs.getDouble("total"));
-				
+
 				// Crear objeto Usuario con solo el ID
 				Usuario usuario = new Usuario();
 				usuario.setIdUsuario(rs.getInt("id_usuario"));
 				pedido.setUsuario(usuario);
-				
+
 				pedidos.add(pedido);
 			}
 			return pedidos;
@@ -239,51 +239,66 @@ public class PedidoDAOImpl implements IPedidoDAO {
 
 	@Override
 	public List<DetallePedido> findDetallesByPedidoId(int idPedido) {
-		final String SQL = "SELECT * FROM detalle_pedido WHERE id_pedido = ?";
-		List<DetallePedido> detalles = new ArrayList<>();
-		try (Connection connection = DbConfig.getInstance().getConnection();
-				PreparedStatement ps = connection.prepareStatement(SQL)) {
-			ps.setInt(1, idPedido);
-			ResultSet rs = ps.executeQuery();
-			while (rs.next()) {
-				DetallePedido detalle = new DetallePedido();
-				detalle.setIdDetalle(rs.getInt("id_detalle"));
-				detalle.setCantidad(rs.getInt("cantidad"));
-				detalle.setPrecioUnitario(rs.getDouble("precio_unitario"));
-				
-				// Crear objeto Pedido con solo el ID
-				Pedido pedido = new Pedido();
-				pedido.setIdPedido(rs.getInt("id_pedido"));
-				detalle.setPedido(pedido);
-				
-				// Crear objeto Producto con solo el ID
-				Producto producto = new Producto();
-				producto.setIdProducto(rs.getString("id_producto"));
-				detalle.setProducto(producto);
-				
-				detalles.add(detalle);
-			}
-			return detalles;
-		} catch (Exception e) {
-			System.out.println("Error al buscar detalles del pedido: " + e.getMessage());
-			return detalles;
-		}
+	    // Hacemos JOIN con producto para traer también el nombre
+	    final String SQL = 
+	        "SELECT d.*, p.nombre AS nombre_producto " +
+	        "FROM detalle_pedido d " +
+	        "JOIN producto p ON d.id_producto = p.id_producto " +
+	        "WHERE d.id_pedido = ?";
+
+	    List<DetallePedido> detalles = new ArrayList<>();
+	    try (Connection connection = DbConfig.getInstance().getConnection();
+	         PreparedStatement ps = connection.prepareStatement(SQL)) {
+
+	        ps.setInt(1, idPedido);
+	        ResultSet rs = ps.executeQuery();
+
+	        while (rs.next()) {
+	            DetallePedido detalle = new DetallePedido();
+	            detalle.setIdDetalle(rs.getInt("id_detalle"));
+	            detalle.setCantidad(rs.getInt("cantidad"));
+	            detalle.setPrecioUnitario(rs.getDouble("precio_unitario"));
+
+	            // Pedido solo con ID
+	            Pedido pedido = new Pedido();
+	            pedido.setIdPedido(rs.getInt("id_pedido"));
+	            detalle.setPedido(pedido);
+
+	            // Producto con ID + NOMBRE
+	            Producto producto = new Producto();
+	            producto.setIdProducto(rs.getString("id_producto"));
+	            producto.setNombre(rs.getString("nombre_producto")); 
+	            detalle.setProducto(producto);
+
+	            detalles.add(detalle);
+	        }
+	        return detalles;
+	    } catch (Exception e) {
+	        System.out.println("Error al buscar detalles del pedido: " + e.getMessage());
+	        return detalles;
+	    }
 	}
+
 
 	@Override
 	public boolean addDetallePedido(DetallePedido detalle) {
-		final String SQL = "INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, precio_unitario) VALUES (?, ?, ?, ?)";
+		final String SQL = "INSERT INTO detalle_pedido (id_pedido, id_producto, cantidad, precio_unitario) "
+				+ "VALUES (?, ?, ?, ?) " + "ON DUPLICATE KEY UPDATE " + "cantidad = cantidad + VALUES(cantidad), "
+				+ "precio_unitario = VALUES(precio_unitario)";
+
 		try (Connection connection = DbConfig.getInstance().getConnection();
 				PreparedStatement ps = connection.prepareStatement(SQL)) {
+
 			ps.setInt(1, detalle.getPedido().getIdPedido());
 			ps.setString(2, detalle.getProducto().getIdProducto());
 			ps.setInt(3, detalle.getCantidad());
 			ps.setDouble(4, detalle.getPrecioUnitario());
-			
+
 			int affectedRows = ps.executeUpdate();
 			return affectedRows > 0;
+
 		} catch (Exception e) {
-			System.out.println("Error al agregar detalle del pedido: " + e.getMessage());
+			System.out.println("Error al agregar/actualizar detalle del pedido: " + e.getMessage());
 			return false;
 		}
 	}
@@ -317,6 +332,52 @@ public class PedidoDAOImpl implements IPedidoDAO {
 		} catch (Exception e) {
 			System.out.println("Error al calcular total del pedido: " + e.getMessage());
 			return null;
+		}
+	}
+
+	@Override
+	public DetallePedido findDetalleByPedidoAndProducto(int idPedido, String idProducto) {
+		final String SQL = "SELECT * FROM detalle_pedido WHERE id_pedido = ? AND id_producto = ?";
+		try (Connection connection = DbConfig.getInstance().getConnection();
+				PreparedStatement ps = connection.prepareStatement(SQL)) {
+			ps.setInt(1, idPedido);
+			ps.setString(2, idProducto);
+			try (ResultSet rs = ps.executeQuery()) {
+				if (rs.next()) {
+					DetallePedido d = new DetallePedido();
+					d.setIdDetalle(rs.getInt("id_detalle"));
+					d.setCantidad(rs.getInt("cantidad"));
+					d.setPrecioUnitario(rs.getDouble("precio_unitario"));
+
+					Pedido p = new Pedido();
+					p.setIdPedido(rs.getInt("id_pedido"));
+					d.setPedido(p);
+
+					Producto prod = new Producto();
+					prod.setIdProducto(rs.getString("id_producto"));
+					d.setProducto(prod);
+
+					return d;
+				}
+			}
+		} catch (Exception e) {
+			System.out.println("Error en findDetalleByPedidoAndProducto: " + e.getMessage());
+		}
+		return null;
+	}
+
+	@Override
+	public boolean updateCantidadDetalle(int idDetalle, int nuevaCantidad) {
+		final String SQL = "UPDATE detalle_pedido SET cantidad = ? WHERE id_detalle = ?";
+		try (Connection connection = DbConfig.getInstance().getConnection();
+				PreparedStatement ps = connection.prepareStatement(SQL)) {
+			ps.setInt(1, nuevaCantidad);
+			ps.setInt(2, idDetalle);
+			int affected = ps.executeUpdate();
+			return affected > 0;
+		} catch (Exception e) {
+			System.out.println("Error en updateCantidadDetalle: " + e.getMessage());
+			return false;
 		}
 	}
 

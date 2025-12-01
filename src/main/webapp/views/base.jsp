@@ -1,7 +1,7 @@
-<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"
+	import="java.util.List, java.util.Map, model.Usuario"%>
 <%
 String ctx = request.getContextPath();
-System.out.println("Context Path: " + ctx);
 
 // Usuario en sesión y nombre a mostrar
 model.Usuario user = (model.Usuario) session.getAttribute("user");
@@ -22,8 +22,20 @@ try {
 } catch (Exception ignore) {
 }
 
+// 👉 URL para el botón "Perfil"
+String perfilUrl;
+if (user != null) {
+	perfilUrl = ctx + "/UsuarioEditarServlet?id=" + user.getIdUsuario();
+} else {
+	perfilUrl = ctx + "/LoginServlet"; // o la página de login que uses
+}
+
 // página de contenido que va “adentro del layout”
 String contentPage = (String) request.getAttribute("contentPage");
+
+// mensajes flash globales (opcional)
+String flashSuccess = (String) session.getAttribute("flashSuccess");
+String flashError = (String) session.getAttribute("flashError");
 %>
 
 <!DOCTYPE html>
@@ -35,7 +47,7 @@ String contentPage = (String) request.getAttribute("contentPage");
 	content="width=device-width, initial-scale=1, shrink-to-fit=no" />
 <meta name="description" content="" />
 <meta name="author" content="" />
-<title>INICIO</title>
+<title>VENTASMN</title>
 
 <!-- Simple Datatables (CSS) -->
 <link
@@ -69,35 +81,23 @@ String contentPage = (String) request.getAttribute("contentPage");
 			<i class="fas fa-bars"></i>
 		</button>
 
-		<!-- Buscador -->
-		<form
-			class="d-none d-md-inline-block form-inline ms-auto me-0 me-md-3 my-2 my-md-0">
-			<div class="input-group">
-				<input class="form-control" type="text"
-					placeholder="Buscar Productos.." aria-label="Buscar" />
-				<button class="btn btn-primary" type="button">
-					<i class="fas fa-search"></i>
-				</button>
-			</div>
-		</form>
-
-		<!-- Usuario -->
-		<ul class="navbar-nav ms-auto ms-md-0 me-3 me-lg-4">
+		<!-- 👉 Usuario (alineado a la derecha del todo) -->
+		<ul class="navbar-nav ms-auto me-0">
 			<li class="nav-item dropdown"><a
 				class="nav-link dropdown-toggle" id="navbarDropdown" href="#"
-				role="button" data-bs-toggle="dropdown" aria-expanded="false"><i
-					class="fas fa-user fa-fw"></i></a>
+				role="button" data-bs-toggle="dropdown" aria-expanded="false"> <i
+					class="fas fa-user fa-fw"></i> <span class="ms-1"><%=(nombre != null ? nombre : "")%></span>
+			</a>
 				<ul class="dropdown-menu dropdown-menu-end"
 					aria-labelledby="navbarDropdown">
-					<li><a class="dropdown-item" href="#">Perfil</a></li>
-					<li><a class="dropdown-item" href="#">Actividad</a></li>
+					<li><a class="dropdown-item" href="<%=perfilUrl%>">Perfil</a></li>
 					<li><hr class="dropdown-divider" /></li>
 					<li>
 						<form id="logoutForm" method="post"
 							action="<%=ctx%>/LogoutServlet" style="display: none"></form> <a
 						class="dropdown-item" href="#"
 						onclick="document.getElementById('logoutForm').submit(); return false;">
-							Salir </a>
+							Cerrar sesión </a>
 					</li>
 				</ul></li>
 		</ul>
@@ -163,7 +163,7 @@ String contentPage = (String) request.getAttribute("contentPage");
 							</nav>
 						</div>
 
-						<!-- Pedidos (admin) -->
+						<!-- Pedidos (admin: ve todos los pedidos) -->
 						<a class="nav-link collapsed" href="#" data-bs-toggle="collapse"
 							data-bs-target="#menuPedidos" aria-expanded="false"
 							aria-controls="menuPedidos">
@@ -185,14 +185,21 @@ String contentPage = (String) request.getAttribute("contentPage");
 						}
 						%>
 
-						<!-- ================== SECCIÓN TIENDA (cualquier logueado) ================== -->
+						<!-- ================== SECCIÓN TIENDA ================== -->
 						<div class="sb-sidenav-menu-heading">Tienda</div>
 
-						<a class="nav-link" href="<%=ctx%>/ListadoProductosServlet">
+						<!-- Ver productos: lo pueden ver todos -->
+						<a class="nav-link" href="<%=ctx%>/ProductoListarServlet">
 							<div class="sb-nav-link-icon">
 								<i class="fas fa-box-open"></i>
 							</div> Productos
-						</a> <a class="nav-link" href="<%=ctx%>/CarritoServlet">
+						</a>
+
+						<!-- 👉 Solo usuario normal puede ver/crear su pedido -->
+						<%
+						if (!isAdmin) {
+						%>
+						<a class="nav-link" href="<%=ctx%>/PedidoEnCursoServlet">
 							<div class="sb-nav-link-icon">
 								<i class="fas fa-shopping-cart"></i>
 							</div> Mi Carrito
@@ -201,6 +208,9 @@ String contentPage = (String) request.getAttribute("contentPage");
 								<i class="fas fa-receipt"></i>
 							</div> Mis Pedidos
 						</a>
+						<%
+						}
+						%>
 
 					</div>
 				</div>
@@ -210,7 +220,8 @@ String contentPage = (String) request.getAttribute("contentPage");
 					<%
 					if (isAdmin) {
 					%>
-					(Admin)<%
+					(Admin)
+					<%
 					}
 					%>
 				</div>
@@ -221,10 +232,37 @@ String contentPage = (String) request.getAttribute("contentPage");
 		<div id="layoutSidenav_content">
 			<main>
 				<div class="container-fluid px-4">
-					<%
-					System.out.println("DBG contentPage = " + contentPage);
-					System.out.println("DBG usuario attr = " + request.getAttribute("usuario"));
 
+					<%-- Mensajes flash globales --%>
+					<%
+					if (flashSuccess != null) {
+					%>
+					<div class="alert alert-success alert-dismissible fade show"
+						role="alert">
+						<%=flashSuccess%>
+						<button type="button" class="btn-close" data-bs-dismiss="alert"
+							aria-label="Close"></button>
+					</div>
+					<%
+					session.removeAttribute("flashSuccess");
+					}
+					%>
+
+					<%
+					if (flashError != null) {
+					%>
+					<div class="alert alert-danger alert-dismissible fade show"
+						role="alert">
+						<%=flashError%>
+						<button type="button" class="btn-close" data-bs-dismiss="alert"
+							aria-label="Close"></button>
+					</div>
+					<%
+					session.removeAttribute("flashError");
+					}
+					%>
+
+					<%
 					// Si no se especificó contentPage, mostramos el dashboard por defecto.
 					if (contentPage == null) {
 					%>
@@ -247,7 +285,18 @@ String contentPage = (String) request.getAttribute("contentPage");
 				</div>
 			</main>
 
-			<footer class="py-4 bg-light mt-auto"> ... </footer>
+			<footer class="py-4 bg-light mt-auto">
+				<div class="container-fluid px-4">
+					<div
+						class="d-flex align-items-center justify-content-between small">
+						<div class="text-muted">© VENTASMN</div>
+						<div>
+							<a href="#">Política de privacidad</a> &middot; <a href="#">Términos
+								&amp; Condiciones</a>
+						</div>
+					</div>
+				</div>
+			</footer>
 		</div>
 	</div>
 

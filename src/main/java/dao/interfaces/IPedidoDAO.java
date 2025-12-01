@@ -23,5 +23,8 @@ public interface IPedidoDAO {
 	boolean addDetallePedido(DetallePedido detalle);
 	boolean updateEstadoPedido(int idPedido, boolean nuevoEstado);
 	Double calcularTotalPedido(int idPedido);
+	DetallePedido findDetalleByPedidoAndProducto(int idPedido, String idProducto);
+	boolean updateCantidadDetalle(int idDetalle, int nuevaCantidad);
+
 	
 }

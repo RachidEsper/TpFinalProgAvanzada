@@ -58,9 +58,9 @@ public class PedidoEditarServlet extends HttpServlet {
             boolean nuevoEstado = "1".equals(estadoParam);
 
             IPedidoService sv = new PedidoServiceImpl();
-            boolean ok = sv.cambiarEstadoPedido(idPedido, nuevoEstado);
+            boolean actualizado = sv.cambiarEstadoPedido(idPedido, nuevoEstado);
 
-            if (ok) {
+            if (actualizado) {
                 session.setAttribute("flashSuccess", "Estado del pedido actualizado.");
             } else {
                 session.setAttribute("flashError", "No se pudo actualizar el estado del pedido.");

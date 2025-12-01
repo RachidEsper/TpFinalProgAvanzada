@@ -13,5 +13,4 @@ public class DataAccessException extends RuntimeException {
     }
 
     
-    // crear excepcion de producto repetido
 }

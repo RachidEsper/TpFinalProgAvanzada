@@ -60,7 +60,7 @@ public class UsuarioCrearServlet extends HttpServlet {
 
             System.out.println("Usuario creado: " + usuario.getNombre());
 
-            // ✅ Redirigir al servlet de listado, no al JSP
+            // Redirigir al servlet de listado, no al JSP
             request.getSession().setAttribute("flashSuccess", "Usuario registrado correctamente.");
             response.sendRedirect(request.getContextPath() + "/UsuarioListarServlet");
 
@@ -72,7 +72,7 @@ public class UsuarioCrearServlet extends HttpServlet {
             request.setAttribute("telefono", telefono);
             request.setAttribute("idTipoUsuario", idTipoUsuarioStr);
 
-            // ✅ Volver al layout con el formulario dentro
+            //  Volver al layout con el formulario dentro
             request.setAttribute("contentPage", "/views/admin/registrousuarios.jsp");
             request.getRequestDispatcher("/views/base.jsp").forward(request, response);
 
