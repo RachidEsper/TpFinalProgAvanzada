@@ -4,11 +4,13 @@ import java.util.List;
 import java.util.Map;
 
 import dao.interfaces.IUsuarioDAO;
+import dao.implementation.PedidoDAOImpl;
 import dao.implementation.UsuarioDAOImpl;
 import exception.BusinessException;
 import model.TipoUsuario;
 import model.Usuario;
 import service.interfaces.IUsuarioService;
+import dao.interfaces.IPedidoDAO;
 
 public class UsuarioServiceImpl implements IUsuarioService {
 
@@ -51,10 +53,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
 		// ===== VERIFICAR EMAIL DUPLICADO =====
 		IUsuarioDAO usuarioDAO = new UsuarioDAOImpl();
-		// Aquí podrías agregar una validación para verificar si el email ya existe
-		// Usuario existente = usuarioDAO.findByEmail(email);
-		// if (existente != null) throw new BusinessException("El email ya está
-		// registrado.");
+		 //para verificar si el email ya existe
+		Usuario existente = usuarioDAO.findByEmail(email);
+		if (existente != null) throw new BusinessException("El email ya está registrado.");
 
 		// ===== CREAR USUARIO =====
 		Usuario nuevoUsuario = new Usuario();
@@ -105,6 +106,12 @@ public class UsuarioServiceImpl implements IUsuarioService {
 	@Override
 	public boolean deleteUsuario(int id) {
 		IUsuarioDAO usuarioDAO = new UsuarioDAOImpl();
+		IPedidoDAO pedidoDAO = new PedidoDAOImpl();
+		
+		if (pedidoDAO.existsByUsuarioId(id)) {
+			// No se puede eliminar el usuario porque tiene pedidos asociados
+			return false;
+		}
 		usuarioDAO.deleteById(id);
 		return true;
 	}
@@ -186,7 +193,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
 			passwordFinal = uDb.getPassword();
 		}
 
-		// 4) Actualizar usando el método de service/DAO que ya tenés
+		// 4) Actualizar usando el método de service/DAO 
 		boolean ok = this.updateUsuario(id, nombre, email, passwordFinal, telefono, idTipo);
 
 		if (!ok) {
