@@ -103,7 +103,7 @@ if (pedido == null || detalles == null || detalles.isEmpty()) {
 			}
 			%>
 		</div>
-		<span class="badge bg-secondary"> Estado: <%=(pedido.getEstado() != null ? pedido.getEstado() : "INICIADO")%>
+		<span class="badge bg-secondary"> Estado: <%=(pedido.getEstado() != false ? pedido.getEstado() : "Pendiente")%>
 		</span>
 	</div>
 
@@ -173,7 +173,7 @@ if (pedido == null || detalles == null || detalles.isEmpty()) {
 		<div class="card-footer d-flex justify-content-end">
 			<a href="<%=ctx%>/ProductoListarServlet"
 				class="btn btn-outline-secondary me-2"> Seguir comprando </a>
-			<button type="submit" class="btn btn-primary">Finalizar
+			<button type="submit" class="btn btn-primary">Iniciar
 				pedido</button>
 		</div>
 	</form>

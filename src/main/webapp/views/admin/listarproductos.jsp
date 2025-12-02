@@ -84,6 +84,7 @@ session.removeAttribute("flashError");
 								for (Categoria c : categorias) {
 									if (c == null)
 								continue;
+
 									String sel = "";
 									if (catParam != null && !catParam.isBlank()) {
 								try {
@@ -150,20 +151,21 @@ session.removeAttribute("flashError");
 			filtros actuales.</p>
 		<%
 		} else {
-		%>
-
-		<%
 		for (Producto p : productos) {
+
 			String idProd = p.getIdProducto();
 			String nombre = p.getNombre();
 			String desc = p.getDescripcion();
 			Double precio = p.getPrecio();
 			float descPct = p.getDescuento();
-			String imagen = p.getUrlImagen(); // base64 o URL
+
+			// 🔹 AHORA usamos urlImagen como URL/ruta
+			String urlImagen = p.getUrlImagen();
+
 			int stock = p.getStock();
 			int idCatProd = p.getIdCategoria();
 
-			// Buscar nombre de categoría según idCategoria (si lo necesitás mostrar)
+			// Buscar nombre de categoría
 			String nombreCategoria = "";
 			if (categorias != null) {
 				for (Categoria c : categorias) {
@@ -174,11 +176,22 @@ session.removeAttribute("flashError");
 				}
 			}
 
-			// Precio final si hay descuento
 			double precioBase = (precio != null ? precio : 0.0);
 			double precioFinal = precioBase;
 			if (descPct > 0) {
 				precioFinal = precioBase * (1 - (descPct / 100.0));
+			}
+
+			// 🔹 Construimos el src de la imagen:
+			//    - Si comienza con http/https => la dejamos tal cual.
+			//    - Si no, asumimos ruta relativa y le agregamos el contextPath.
+			String srcImagen = null;
+			if (urlImagen != null && !urlImagen.isBlank()) {
+				if (urlImagen.startsWith("http://") || urlImagen.startsWith("https://")) {
+			srcImagen = urlImagen;
+				} else {
+			srcImagen = ctx + "/" + urlImagen;
+				}
 			}
 		%>
 
@@ -187,10 +200,10 @@ session.removeAttribute("flashError");
 				<!-- Imagen -->
 				<div class="col-md-3 text-center p-2">
 					<%
-					if (imagen != null && !imagen.isBlank()) {
+					if (srcImagen != null) {
 					%>
-					<img src="data:image/jpeg;base64,<%=imagen%>"
-						class="img-fluid rounded" alt="<%=nombre%>">
+					<img src="<%=srcImagen%>" class="img-fluid rounded"
+						alt="<%=nombre%>" style="max-height: 120px; object-fit: cover;">
 					<%
 					} else {
 					%>
@@ -228,7 +241,8 @@ session.removeAttribute("flashError");
 						}
 						%>
 
-						<span class="badge <%=stock > 0 ? "bg-secondary" : "bg-danger"%>">
+						<span
+							class="badge <%=(stock > 0 ? "bg-secondary" : "bg-danger")%>">
 							Stock: <%=stock%>
 						</span>
 					</div>
@@ -257,7 +271,7 @@ session.removeAttribute("flashError");
 						}
 						%>
 
-						<small class="text-muted d-block mb-2"> <%=stock > 0 ? "Disponible" : "Sin stock"%>
+						<small class="text-muted d-block mb-2"> <%=(stock > 0 ? "Disponible" : "Sin stock")%>
 						</small>
 
 						<!-- Botón para carrito / pedido (solo usuario normal) -->
@@ -269,7 +283,7 @@ session.removeAttribute("flashError");
 							<input type="hidden" name="accion" value="agregar"> <input
 								type="hidden" name="idProducto" value="<%=idProd%>">
 							<button type="submit" class="btn btn-sm btn-primary"
-								<%=stock <= 0 ? "disabled" : ""%>>
+								<%=(stock <= 0 ? "disabled" : "")%>>
 								<i class="fas fa-shopping-cart me-1"></i> Agregar al pedido
 							</button>
 						</form>
@@ -277,7 +291,7 @@ session.removeAttribute("flashError");
 						}
 						%>
 
-						<!-- 👉 Botones EDITAR/ELIMINAR solo si es admin -->
+						<!-- Botones EDITAR/ELIMINAR solo si es admin -->
 						<%
 						if (isAdmin) {
 						%>
