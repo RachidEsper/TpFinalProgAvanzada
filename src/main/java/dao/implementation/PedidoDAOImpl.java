@@ -145,21 +145,25 @@ public class PedidoDAOImpl implements IPedidoDAO {
 	}
 
 	@Override
-	public boolean existsById(int idPedido) {
-		final String SQL = "SELECT COUNT(*) FROM pedido WHERE id_pedido = ?";
-		try (Connection connection = DbConfig.getInstance().getConnection();
-				PreparedStatement ps = connection.prepareStatement(SQL)) {
-			ps.setInt(1, idPedido);
-			ResultSet rs = ps.executeQuery();
-			if (rs.next()) {
-				return rs.getInt(1) > 0;
-			}
-			return false;
-		} catch (Exception e) {
-			System.out.println("Error al verificar si existe el pedido: " + e.getMessage());
-			return false;
-		}
+	public boolean existsByUsuarioId(int idUsuario) {
+	    final String SQL = "SELECT 1 FROM pedido WHERE id_usuario = ? LIMIT 1";
+
+	    try (Connection connection = DbConfig.getInstance().getConnection();
+	         PreparedStatement ps = connection.prepareStatement(SQL)) {
+
+	        ps.setInt(1, idUsuario);
+
+	        try (ResultSet rs = ps.executeQuery()) {
+	            // Si hay al menos una fila, el usuario tiene pedidos
+	            return rs.next();
+	        }
+
+	    } catch (Exception e) {
+	        System.out.println("Error al verificar si el usuario tiene pedidos: " + e.getMessage());
+	        return false; // o lanzar excepción según tu diseño
+	    }
 	}
+
 
 	@Override
 	public int count() {

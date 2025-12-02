@@ -13,7 +13,7 @@ public interface IPedidoDAO {
 	Pedido create(Pedido pedido);
 	Pedido update(Pedido pedido);
 	boolean deleteById(int idPedido);
-	boolean existsById(int idPedido);
+	boolean existsByUsuarioId(int idUsuario);
 	int count();
 	
 	// Métodos específicos de negocio para Pedido
