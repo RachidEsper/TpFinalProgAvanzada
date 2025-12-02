@@ -159,7 +159,7 @@ public class PedidoEnCursoServlet extends HttpServlet {
             }
 
             // OK
-            session.setAttribute("flashSuccess", "Pedido finalizado correctamente.");
+            session.setAttribute("flashSuccess", "Pedido Iniciado correctamente.");
             response.sendRedirect(ctx + "/PedidoListarServlet");
             return;
         }

@@ -60,7 +60,7 @@ public class UsuarioEliminarServlet extends HttpServlet {
 	        if (eliminar) {
 	            session.setAttribute("flashSuccess", "Usuario eliminado correctamente.");
 	        } else {
-	            session.setAttribute("flashError", "No se pudo eliminar el usuario.");
+	            session.setAttribute("flashError", "El usuario no pudo ser eliminado, tiene pedidos asociados.");
 	        }
 
 	        response.sendRedirect(ctx + "/UsuarioListarServlet");
