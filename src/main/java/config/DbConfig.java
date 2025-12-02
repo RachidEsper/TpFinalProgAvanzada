@@ -39,7 +39,7 @@ public final class DbConfig {
 	// (ideal para luego reemplazar por un pool)
 	public Connection getConnection() throws SQLException {
 		try {
-			Class.forName("com.mysql.cj.jdbc.Driver");
+			Class.forName("com.mysql.cj.jdbc.Driver"); // no va aquí normalmente
 			Connection connection;
 			connection=DriverManager.getConnection(host,user,pass);
 			return connection;
