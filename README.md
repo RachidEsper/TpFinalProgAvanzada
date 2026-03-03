@@ -241,6 +241,76 @@ Si tu base tiene usuarios precargados, documentalos acá:
 
 ---
 
+## Español
+
+### Capturas (Screenshots)
+
+> Solo se incluyen imágenes con nombres representativos (se excluyen las que comienzan con "Screenshot from ...").
+
+**Login**
+<img src="imgs/Login.png" width="900" alt="Login">
+
+**Formulario de login**
+<img src="imgs/flogin.png" width="900" alt="Formulario de login">
+
+**Agregar producto**
+<img src="imgs/AddProduct.png" width="900" alt="Agregar producto">
+
+**Ver productos**
+<img src="imgs/viewproducts.png" width="900" alt="Ver productos">
+
+**Crear orden**
+<img src="imgs/createdorder.png" width="900" alt="Crear orden">
+
+**Ver órdenes**
+<img src="imgs/vieworders.png" width="900" alt="Ver órdenes">
+
+**Lista de usuarios**
+<img src="imgs/showusers.png" width="900" alt="Lista de usuarios">
+
+**Agregar usuario**
+<img src="imgs/addUser.png" width="900" alt="Agregar usuario">
+
+**Editar usuario**
+<img src="imgs/edituser.png" width="900" alt="Editar usuario">
+
+---
+
+## English
+
+### Screenshots
+
+> Only images with representative names are included (files starting with "Screenshot from ..." are excluded).
+
+**Login**
+<img src="imgs/Login.png" width="900" alt="Login">
+
+**Login form**
+<img src="imgs/flogin.png" width="900" alt="Login form">
+
+**Add product**
+<img src="imgs/AddProduct.png" width="900" alt="Add product">
+
+**View products**
+<img src="imgs/viewproducts.png" width="900" alt="View products">
+
+**Create order**
+<img src="imgs/createdorder.png" width="900" alt="Create order">
+
+**View orders**
+<img src="imgs/vieworders.png" width="900" alt="View orders">
+
+**Users list**
+<img src="imgs/showusers.png" width="900" alt="Users list">
+
+**Add user**
+<img src="imgs/addUser.png" width="900" alt="Add user">
+
+**Edit user**
+<img src="imgs/edituser.png" width="900" alt="Edit user">
+
+---
+
 ## 📄 License
 Educational project (coursework).
 
