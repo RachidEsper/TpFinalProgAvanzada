@@ -245,31 +245,31 @@ Si tu base tiene usuarios precargados, documentalos acá:
 
 ### Capturas (Screenshots)
 
-**Login**
+**Login**<br>
 <img src="imgs/Login.png" width="900" alt="Login">
 
-**Formulario de login**
+**Formulario de login**<br>
 <img src="imgs/flogin.png" width="900" alt="Formulario de login">
 
-**Agregar producto**
+**Agregar producto**<br>
 <img src="imgs/AddProduct.png" width="900" alt="Agregar producto">
 
-**Ver productos**
+**Ver productos**<br>
 <img src="imgs/viewproducts.png" width="900" alt="Ver productos">
 
-**Crear orden**
+**Crear orden**<br>
 <img src="imgs/createdorder.png" width="900" alt="Crear orden">
 
-**Ver órdenes**
+**Ver órdenes**<br>
 <img src="imgs/vieworders.png" width="900" alt="Ver órdenes">
 
-**Lista de usuarios**
+**Lista de usuarios**<br>
 <img src="imgs/showusers.png" width="900" alt="Lista de usuarios">
 
-**Agregar usuario**
+**Agregar usuario**<br>
 <img src="imgs/addUser.png" width="900" alt="Agregar usuario">
 
-**Editar usuario**
+**Editar usuario**<br>
 <img src="imgs/edituser.png" width="900" alt="Editar usuario">
 
 ---
@@ -278,35 +278,34 @@ Si tu base tiene usuarios precargados, documentalos acá:
 
 ### Screenshots
 
-**Login**
+**Login**<br>
 <img src="imgs/Login.png" width="900" alt="Login">
 
-**Login form**
+**Login form**<br>
 <img src="imgs/flogin.png" width="900" alt="Login form">
 
-**Add product**
+**Add product**<br>
 <img src="imgs/AddProduct.png" width="900" alt="Add product">
 
-**View products**
+**View products**<br>
 <img src="imgs/viewproducts.png" width="900" alt="View products">
 
-**Create order**
+**Create order**<br>
 <img src="imgs/createdorder.png" width="900" alt="Create order">
 
-**View orders**
+**View orders**<br>
 <img src="imgs/vieworders.png" width="900" alt="View orders">
 
-**Users list**
+**Users list**<br>
 <img src="imgs/showusers.png" width="900" alt="Users list">
 
-**Add user**
+**Add user**<br>
 <img src="imgs/addUser.png" width="900" alt="Add user">
 
-**Edit user**
+**Edit user**<br>
 <img src="imgs/edituser.png" width="900" alt="Edit user">
 
 ---
-
 ## 📄 License
 Educational project (coursework).
 
