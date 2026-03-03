@@ -245,8 +245,6 @@ Si tu base tiene usuarios precargados, documentalos acá:
 
 ### Capturas (Screenshots)
 
-> Solo se incluyen imágenes con nombres representativos (se excluyen las que comienzan con "Screenshot from ...").
-
 **Login**
 <img src="imgs/Login.png" width="900" alt="Login">
 
@@ -279,8 +277,6 @@ Si tu base tiene usuarios precargados, documentalos acá:
 ## English
 
 ### Screenshots
-
-> Only images with representative names are included (files starting with "Screenshot from ..." are excluded).
 
 **Login**
 <img src="imgs/Login.png" width="900" alt="Login">
